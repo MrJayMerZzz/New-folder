@@ -1,18 +1,20 @@
 "use client";
 
 import { useState, useMemo, ChangeEvent } from "react";
+// Assuming your data.ts file correctly imports and exports componentDataMap
+// and the necessary types (CPU, Motherboard, RAM etc.) based on the file structure
 import {
   componentDataMap,
   ComponentTypeKey,
   CPU,
   Motherboard,
-  RAM, // Ensure RAM type is imported
+  RAM,
   GPU,
   PowerSupply,
   Case,
   CPUCooler,
-  StorageDevice // Added StorageDevice for completeness if needed
-} from "../constants/data"; // Assuming data types are correctly defined here
+  StorageDevice
+} from "../constants/data"; // Adjust path as needed
 
 const componentSlots: { key: ComponentTypeKey; label: string }[] = [
   { key: "cpu", label: "CPU" },
@@ -32,7 +34,25 @@ interface BaseComponent {
     name: string;
     brand?: string;
     price?: number;
-    // Add other common optional fields if needed
+    // Add other potentially missing fields used in data if needed
+    microarchitecture?: string; // From CPU
+    socket?: string; // From Motherboard
+    tdp?: number; // From CPU, GPU
+    memorySlots?: number; // From Motherboard
+    formFactor?: string; // From Motherboard
+    modules?: number; // From RAM
+    ddrType?: 'DDR3' | 'DDR4' | 'DDR5'; // From RAM
+    length?: number; // From GPU
+    wattage?: number; // From PowerSupply
+    // Fields added for Case compatibility
+    supportedFormFactors?: string[];
+    maxGpuLength?: number | null;
+    // Fields needed for Cooler compatibility
+    supportedSockets?: string[];
+    height?: number | null;
+    // Field needed for RAM compat check
+    maxCoolerHeight?: number | null; // From Case
+
 }
 
 
@@ -56,20 +76,20 @@ const ComponentSimulator = () => {
   };
 
   // --- Get Selected Objects ---
-  // These are needed for filtering and compatibility checks
-
+  // Use type assertions for potentially extended types if necessary
   const selectedMotherboardObject = useMemo(() => componentDataMap.motherboard?.find(m => m.name === selections.motherboard), [selections.motherboard]);
   const selectedCpuObject = useMemo(() => componentDataMap.cpu?.find(c => c.name === selections.cpu), [selections.cpu]);
-  const selectedCaseObject = useMemo(() => componentDataMap.case?.find(c => c.name === selections.case), [selections.case]);
+  const selectedCaseObject = useMemo(() => componentDataMap.case?.find(c => c.name === selections.case) as Case | undefined, [selections.case]);
   const selectedRamObject = useMemo(() => componentDataMap.memory?.find(r => r.name === selections.memory), [selections.memory]);
   const selectedGpuObject = useMemo(() => componentDataMap.videoCard?.find(g => g.name === selections.videoCard), [selections.videoCard]);
-  const selectedCoolerObject = useMemo(() => componentDataMap.cpuCooler?.find(c => c.name === selections.cpuCooler), [selections.cpuCooler]);
+  const selectedCoolerObject = useMemo(() => componentDataMap.cpuCooler?.find(c => c.name === selections.cpuCooler) as CPUCooler | undefined, [selections.cpuCooler]);
   const selectedPsuObject = useMemo(() => componentDataMap.powerSupply?.find(p => p.name === selections.powerSupply), [selections.powerSupply]);
 
 
   // --- Filtered Options Calculation ---
+  // (Assuming these hooks correctly use the potentially extended types now)
 
-  // Filter CPU Options (Based on Mobo Socket) - Works with your data
+  // Filter CPU Options (Based on Mobo Socket)
   const filteredCpuOptions = useMemo(() => {
     const allCpus = componentDataMap.cpu ?? [];
     let filtered: CPU[] = allCpus;
@@ -78,120 +98,107 @@ const ComponentSimulator = () => {
       filtered = filtered.filter(cpu => cpu.brand === selectedCpuBrand);
     }
 
-    // Filter by selected Motherboard socket
     if (isAutoCompatEnabled && selectedMotherboardObject) {
       filtered = filtered.filter(cpu => cpu.microarchitecture === selectedMotherboardObject.socket);
     }
     return filtered;
-  }, [selectedCpuBrand, selections.motherboard, isAutoCompatEnabled, selectedMotherboardObject]);
+  }, [selectedCpuBrand, isAutoCompatEnabled, selectedMotherboardObject]);
 
-  // Filter Motherboard Options (Based on CPU Socket) - Works with your data
-  // Note: Case form factor filtering removed due to missing 'supportedFormFactors' in data
+  // Filter Motherboard Options (Based on CPU Socket & Case Form Factor)
   const filteredMotherboardOptions = useMemo(() => {
     const allMotherboards = componentDataMap.motherboard ?? [];
     let filtered: Motherboard[] = allMotherboards;
 
-    // Filter by selected CPU socket
     if (isAutoCompatEnabled && selectedCpuObject) {
         filtered = filtered.filter(mobo => mobo.socket === selectedCpuObject.microarchitecture);
     }
 
-    // --- REMOVED Case Form Factor Filter ---
-    // Reason: `selectedCaseObject.supportedFormFactors` does not exist in your Case data type
-    // if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.supportedFormFactors) {
-    //    filtered = filtered.filter(mobo => selectedCaseObject.supportedFormFactors.includes(mobo.formFactor));
-    // }
+    if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.supportedFormFactors) {
+       filtered = filtered.filter(mobo => selectedCaseObject.supportedFormFactors.includes(mobo.formFactor));
+    }
 
     return filtered;
-  }, [selections.cpu, isAutoCompatEnabled, selectedCpuObject]); // Removed selectedCaseObject from deps as it's not used
+  }, [isAutoCompatEnabled, selectedCpuObject, selectedCaseObject]);
 
-  // Filter RAM Options (Based on Mobo RAM Type) - Works with your data
+  // Filter RAM Options (Based on Mobo RAM Type)
   const filteredRamOptions = useMemo(() => {
     const allRam = componentDataMap.memory ?? [];
     let filtered: RAM[] = allRam;
 
-    // Filter by Motherboard RAM Type
     if (isAutoCompatEnabled && selectedMotherboardObject && selectedMotherboardObject.ramType) {
         filtered = filtered.filter(ram => ram.ddrType === selectedMotherboardObject.ramType);
     }
     return filtered;
-  }, [selections.motherboard, isAutoCompatEnabled, selectedMotherboardObject]);
+  }, [isAutoCompatEnabled, selectedMotherboardObject]);
 
-  // Filter GPU Options - Removed Case Length filter
-  // Reason: `selectedCaseObject.maxGpuLength` does not exist in your Case data type
+  // Filter GPU Options (Based on Case Length)
   const filteredGpuOptions = useMemo(() => {
     const allGpus = componentDataMap.videoCard ?? [];
     let filtered: GPU[] = allGpus;
 
-    // --- REMOVED Case Max GPU Length Filter ---
-    // if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.maxGpuLength) {
-    //     filtered = filtered.filter(gpu => !gpu.length || gpu.length <= selectedCaseObject.maxGpuLength);
-    // }
+     if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.maxGpuLength != null) {
+         filtered = filtered.filter(gpu => !gpu.length || gpu.length <= selectedCaseObject.maxGpuLength);
+     }
 
     return filtered;
-  }, [isAutoCompatEnabled]); // Removed selectedCaseObject from deps as it's not used
+  }, [isAutoCompatEnabled, selectedCaseObject]);
 
-   // Filter Case Options - Removed Mobo Form Factor & GPU Length filters
-   // Reason: Relied on `supportedFormFactors` and `maxGpuLength` which are missing
+   // Filter Case Options (Based on Mobo Form Factor & GPU Length)
    const filteredCaseOptions = useMemo(() => {
      const allCases = componentDataMap.case ?? [];
      let filtered: Case[] = allCases;
 
-     // --- REMOVED Motherboard Form Factor Filter ---
-     // if (isAutoCompatEnabled && selectedMotherboardObject && selectedMotherboardObject.formFactor) {
-     //     filtered = filtered.filter(c => c.supportedFormFactors?.includes(selectedMotherboardObject.formFactor));
-     // }
+      if (isAutoCompatEnabled && selectedMotherboardObject && selectedMotherboardObject.formFactor) {
+          // Ensure case data has supportedFormFactors array
+          filtered = filtered.filter(c => c.supportedFormFactors?.includes(selectedMotherboardObject.formFactor));
+      }
 
-     // --- REMOVED GPU Length Filter ---
-     // if (isAutoCompatEnabled && selectedGpuObject && selectedGpuObject.length) {
-     //     filtered = filtered.filter(c => !c.maxGpuLength || c.maxGpuLength >= selectedGpuObject.length);
-     // }
+     if (isAutoCompatEnabled && selectedGpuObject && selectedGpuObject.length) {
+         // Ensure case data has maxGpuLength (number | null)
+         filtered = filtered.filter(c => c.maxGpuLength == null || c.maxGpuLength >= selectedGpuObject.length);
+     }
 
      return filtered;
-   }, [isAutoCompatEnabled]); // Removed selectedMotherboardObject, selectedGpuObject from deps
+   }, [isAutoCompatEnabled, selectedMotherboardObject, selectedGpuObject]);
 
-    // *** FIXED *** Filter Power Supply Options (Based on estimated wattage) - Calculates wattage internally
+    // Filter Power Supply Options (Based on estimated wattage) - Calculates wattage internally
     const filteredPowerSupplyOptions = useMemo(() => {
         const allPsus = componentDataMap.powerSupply ?? [];
         let filtered: PowerSupply[] = allPsus;
 
-        // Calculate required wattage *inside* this hook
         const cpuTdp = selectedCpuObject?.tdp || 0;
         const gpuTdp = selectedGpuObject?.tdp || 0;
         const otherComponentsEstimate = 50;
-        const requiredWattage = cpuTdp + gpuTdp + otherComponentsEstimate; // Calculate here
+        const requiredWattage = cpuTdp + gpuTdp + otherComponentsEstimate;
 
-        const headroomFactor = 1.2; // Suggest 20% headroom
+        const headroomFactor = 1.2;
 
-        if (isAutoCompatEnabled && requiredWattage > 50) { // Check if wattage is > base estimate
-            // Suggest PSUs with wattage >= estimated + headroom
+        if (isAutoCompatEnabled && requiredWattage > 50) {
             filtered = filtered.filter(psu => psu.wattage >= requiredWattage * headroomFactor);
         }
         return filtered;
-    // Update dependencies: remove estimatedWattage, add selectedCpuObject and selectedGpuObject
-    }, [isAutoCompatEnabled, selectedCpuObject, selectedGpuObject]); // Depends on the objects needed for calculation
+    }, [isAutoCompatEnabled, selectedCpuObject, selectedGpuObject]);
 
-
-   // Filter CPU Cooler Options - Removed Socket & Case Clearance filters
-   // Reason: Relied on `supportedSockets` and `height` (Cooler) / `maxCoolerHeight` (Case) which are missing
+   // Filter CPU Cooler Options (Based on CPU Socket & Case Clearance)
    const filteredCpuCoolerOptions = useMemo(() => {
      const allCoolers = componentDataMap.cpuCooler ?? [];
      let filtered: CPUCooler[] = allCoolers;
 
-     // --- REMOVED CPU Socket Filter ---
-     // if (isAutoCompatEnabled && selectedCpuObject && selectedCpuObject.microarchitecture) {
-     //   filtered = filtered.filter(cooler => cooler.supportedSockets?.includes(selectedCpuObject.microarchitecture));
-     // }
+      const targetSocket = selectedCpuObject?.microarchitecture || selectedMotherboardObject?.socket;
+      if (isAutoCompatEnabled && targetSocket) {
+         // Ensure cooler data has supportedSockets array
+        filtered = filtered.filter(cooler => cooler.supportedSockets?.includes(targetSocket));
+      }
 
-     // --- REMOVED Case Cooler Height Filter ---
-     // if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.maxCoolerHeight) {
-     //   filtered = filtered.filter(cooler => !cooler.height || cooler.height <= selectedCaseObject.maxCoolerHeight);
-     // }
+      if (isAutoCompatEnabled && selectedCaseObject && selectedCaseObject.maxCoolerHeight != null) {
+        // Ensure cooler data has height (number | null)
+        filtered = filtered.filter(cooler => cooler.height == null || cooler.height <= selectedCaseObject.maxCoolerHeight);
+      }
 
      return filtered;
-   }, [isAutoCompatEnabled]); // Removed object dependencies as they are not used
+   }, [isAutoCompatEnabled, selectedCpuObject, selectedMotherboardObject, selectedCaseObject]);
 
-   // Estimated Wattage Calculation - Moved below filters, Works
+   // Estimated Wattage Calculation
     const estimatedWattage = useMemo(() => {
      const cpuTdp = selectedCpuObject?.tdp || 0;
      const gpuTdp = selectedGpuObject?.tdp || 0;
@@ -201,36 +208,62 @@ const ComponentSimulator = () => {
          return cpuTdp + gpuTdp + otherComponentsEstimate;
      }
      return 0;
-    }, [selectedCpuObject, selectedGpuObject]); // Depend on the derived objects
+    }, [selectedCpuObject, selectedGpuObject]);
 
 
-  // --- Compatibility Checks --- (No change needed here based on the error)
+  // --- Compatibility Checks ---
   const compatibilityIssues = useMemo(() => {
      const issues: string[] = [];
-     // Use the memoized selected objects from above
 
-     // CPU <-> Motherboard Socket Check - Works
+     // NOTE: Ensure variables used in template strings are correctly defined and accessed.
+     // The `?.` optional chaining is helpful for potentially undefined objects.
+
+     // CPU <-> Motherboard Socket Check
      if (selectedCpuObject && selectedMotherboardObject && selectedCpuObject.microarchitecture !== selectedMotherboardObject.socket) {
        issues.push(
          `CPU (${selectedCpuObject.brand || ''} ${selectedCpuObject.name}) socket (${selectedCpuObject.microarchitecture}) doesn't match Motherboard (${selectedMotherboardObject.brand || ''} ${selectedMotherboardObject.name}) socket (${selectedMotherboardObject.socket}).`
        );
      }
 
-     // RAM Modules vs Motherboard Slots Check - Works
+     // RAM Modules vs Motherboard Slots Check
      if (selectedRamObject && selectedMotherboardObject && selectedRamObject.modules > selectedMotherboardObject.memorySlots) {
        issues.push(
          `RAM kit (${selectedRamObject.name}) has too many modules (${selectedRamObject.modules}) for motherboard slots (${selectedMotherboardObject.memorySlots}).`
        );
      }
 
-     // RAM Type vs Motherboard Supported Type Check - Works
+     // RAM Type vs Motherboard Supported Type Check
      if (selectedRamObject && selectedMotherboardObject && selectedMotherboardObject.ramType && selectedRamObject.ddrType !== selectedMotherboardObject.ramType) {
         issues.push(`RAM type (${selectedRamObject.ddrType}) is incompatible with Motherboard supported type (${selectedMotherboardObject.ramType}).`);
      }
 
-     // --- REMOVED Checks based on missing data ---
+     // Motherboard Form Factor vs Case Check (needs 'supportedFormFactors' array in Case data)
+     if (selectedMotherboardObject && selectedCaseObject && selectedCaseObject.supportedFormFactors && !selectedCaseObject.supportedFormFactors.includes(selectedMotherboardObject.formFactor)) {
+         issues.push(`Motherboard form factor (${selectedMotherboardObject.formFactor}) may not fit in the Case (${selectedCaseObject.name}). Check case specs.`);
+     }
 
-     // Estimated Wattage vs PSU Wattage Check - Works
+     // GPU Length vs Case Max Length Check (needs 'maxGpuLength' in Case data)
+     if (selectedGpuObject && selectedCaseObject && selectedCaseObject.maxGpuLength != null && selectedGpuObject.length > selectedCaseObject.maxGpuLength) {
+         // Ensure template literal uses backticks ` `
+         issues.push(
+           `GPU (${selectedGpuObject.brand || ''} ${selectedGpuObject.name}) length (${selectedGpuObject.length}mm) may exceed Case maximum (${selectedCaseObject.maxGpuLength}mm).`
+           );
+     }
+
+     // CPU Cooler Height vs Case Clearance Check (needs 'height' in Cooler data & 'maxCoolerHeight' in Case data)
+     if (selectedCoolerObject && selectedCaseObject && selectedCaseObject.maxCoolerHeight != null && selectedCoolerObject.height != null && selectedCoolerObject.height > selectedCaseObject.maxCoolerHeight) {
+          issues.push(`CPU Cooler (${selectedCoolerObject.name}) height (${selectedCoolerObject.height}mm) exceeds Case maximum clearance (${selectedCaseObject.maxCoolerHeight}mm).`);
+     }
+
+      // CPU Cooler Socket vs CPU/Motherboard Socket Check (needs 'supportedSockets' array in Cooler data)
+      if (selectedCoolerObject && selectedCoolerObject.supportedSockets) {
+         const targetSocket = selectedCpuObject?.microarchitecture || selectedMotherboardObject?.socket;
+         if (targetSocket && !selectedCoolerObject.supportedSockets.includes(targetSocket)) {
+             issues.push(`CPU Cooler (${selectedCoolerObject.name}) may not support the selected CPU/Motherboard socket (${targetSocket}).`);
+         }
+     }
+
+     // Estimated Wattage vs PSU Wattage Check
      const cpuTdp = selectedCpuObject?.tdp || 0;
      const gpuTdp = selectedGpuObject?.tdp || 0;
      const otherComponentsEstimate = 50;
@@ -241,13 +274,9 @@ const ComponentSimulator = () => {
          `Selected PSU (${selectedPsuObject.name}) wattage (${selectedPsuObject.wattage}W) may be low for estimated load (~${estimatedPowerUsage}W). Consider a PSU with more headroom.`
        );
      }
-     // Optional headroom warning check remains commented
-     // else if (estimatedPowerUsage > 50 && selectedPsuObject && selectedPsuObject.wattage < estimatedPowerUsage * 1.2) {
-     //     // issues.push(`PSU (${selectedPsuObject.name}) wattage (${selectedPsuObject.wattage}W) is close to estimated load (~${estimatedPowerUsage}W). Higher wattage recommended for headroom.`);
-     // }
 
      return issues;
-  }, [selectedCpuObject, selectedMotherboardObject, selectedRamObject, selectedGpuObject, selectedPsuObject, selectedCaseObject, selectedCoolerObject]); // Dependencies include all objects used
+  }, [selectedCpuObject, selectedMotherboardObject, selectedRamObject, selectedGpuObject, selectedPsuObject, selectedCaseObject, selectedCoolerObject]);
 
 
   // --- Rendering ---
@@ -271,8 +300,8 @@ const ComponentSimulator = () => {
                   <span className="font-semibold">System Status:</span>{' '}
                   {compatibilityIssues.length > 0
                     ? `Found ${compatibilityIssues.length} potential compatibility issue(s).`
-                    : estimatedWattage > 0 && Object.values(selections).some(val => val !== '') // Check if at least one part is selected
-                    ? 'Selected components appear compatible based on available data.'
+                    : estimatedWattage > 0 && Object.values(selections).some(val => !!val)
+                    ? 'Selected components appear compatible.'
                     : 'Select components to check compatibility.'}
                </div>
                {estimatedWattage > 0 && (
@@ -283,8 +312,11 @@ const ComponentSimulator = () => {
            </div>
            {compatibilityIssues.length > 0 && (
              <ul className="list-disc pl-5 mt-2 space-y-1">
+                {/* *** FIX HERE: Use dangerouslySetInnerHTML for rendering issue strings *** */}
                {compatibilityIssues.map((issue, index) => (
-                 <li key={index}>{issue}</li>
+                 // WARNING: Only use this if 'issue' strings are guaranteed to be safe HTML
+                 // generated by your trusted code, not user input.
+                 <li key={index} dangerouslySetInnerHTML={{ __html: issue }} />
                ))}
              </ul>
            )}
@@ -335,7 +367,7 @@ const ComponentSimulator = () => {
                     break;
                   case 'motherboard':
                      options = filteredMotherboardOptions;
-                     filterDependencyMet = !!selectedCpuObject;
+                     filterDependencyMet = !!selectedCpuObject || (!!selectedCaseObject && !!selectedCaseObject.supportedFormFactors);
                      filtered = isAutoCompatEnabled && filterDependencyMet;
                      break;
                   case 'memory':
@@ -345,21 +377,24 @@ const ComponentSimulator = () => {
                     break;
                   case 'videoCard':
                     options = filteredGpuOptions;
-                    filtered = false; // No active filter
+                    filterDependencyMet = !!selectedCaseObject && selectedCaseObject.maxGpuLength != null;
+                    filtered = isAutoCompatEnabled && filterDependencyMet;
                     break;
                   case 'case':
                      options = filteredCaseOptions;
-                     filtered = false; // No active filter
+                     filterDependencyMet = (!!selectedMotherboardObject && !!selectedMotherboardObject.formFactor) || (!!selectedGpuObject && !!selectedGpuObject.length);
+                     filtered = isAutoCompatEnabled && filterDependencyMet;
                      break;
                   case 'powerSupply':
                     options = filteredPowerSupplyOptions;
-                    // Check if calculation inputs are present
                     filterDependencyMet = !!(selectedCpuObject?.tdp || selectedGpuObject?.tdp);
                     filtered = isAutoCompatEnabled && filterDependencyMet;
                     break;
                   case 'cpuCooler':
                      options = filteredCpuCoolerOptions;
-                     filtered = false; // No active filter
+                     // Check if dependencies for *any* cooler filter are met
+                     filterDependencyMet = !!(selectedCpuObject || selectedMotherboardObject || (selectedCaseObject && selectedCaseObject.maxCoolerHeight != null));
+                     filtered = isAutoCompatEnabled && filterDependencyMet;
                      break;
                   default:
                     options = componentDataMap[key as keyof typeof componentDataMap] ?? [];
@@ -367,7 +402,7 @@ const ComponentSimulator = () => {
                 }
 
                 const currentSelection = selections[key] || "";
-                const allOptionsForType = componentDataMap[key as keyof typeof componentDataMap] ?? [];
+                const allOptionsForType = componentDataMap[key as keyof typeof componentDataMap] as BaseComponent[] ?? [];
 
                 // Add back current selection if filtered out
                 const currentSelectedItem = allOptionsForType.find(item => item.name === currentSelection);
@@ -399,7 +434,7 @@ const ComponentSimulator = () => {
                             <div>
                                 <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
                                     {label} Model
-                                    {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered by Mobo Socket)</span>}
+                                    {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered)</span>}
                                 </label>
                                 <select
                                     id={key}
@@ -410,13 +445,16 @@ const ComponentSimulator = () => {
                                 >
                                     <option value="">-- Select a {label} --</option>
                                     {options.length === 0 && isAutoCompatEnabled && filterDependencyMet && (
-                                        <option disabled>No compatible CPUs for selected Motherboard</option>
+                                        <option disabled>No compatible CPUs</option>
                                     )}
-                                    {options.map((item: CPU) => (
-                                        <option key={item.name} value={item.name}>
-                                            {item.brand} {item.name} {item.price ? `($${item.price.toFixed(2)})` : ''}
-                                        </option>
-                                    ))}
+                                    {options.map((item: CPU) => {
+                                        const nameIncludesBrand = item.brand && item.name.toLowerCase().startsWith(item.brand.toLowerCase() + ' ');
+                                        return (
+                                            <option key={item.name} value={item.name}>
+                                                {!nameIncludesBrand ? `${item.brand} ` : ''}{item.name} {item.price ? `($${item.price.toFixed(2)})` : ''}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
                             </div>
                         </div>
@@ -428,9 +466,7 @@ const ComponentSimulator = () => {
                     <div key={key} className="bg-white p-4 rounded-lg shadow border">
                         <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
                             {label}
-                            {filtered && key === 'motherboard' && <span className="text-xs text-indigo-600 ml-1">(Filtered by CPU Socket)</span>}
-                            {filtered && key === 'memory' && <span className="text-xs text-indigo-600 ml-1">(Filtered by Mobo RAM Type)</span>}
-                            {filtered && key === 'powerSupply' && <span className="text-xs text-indigo-600 ml-1">(Filtered by Wattage Est.)</span>}
+                            {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered)</span>}
                         </label>
                         <select
                             id={key}
@@ -441,13 +477,17 @@ const ComponentSimulator = () => {
                         >
                             <option value="">-- Select a {label} --</option>
                              {options.length === 0 && isAutoCompatEnabled && filterDependencyMet && (
-                                <option disabled>No compatible options based on current selections</option>
+                                <option disabled>No compatible options</option>
                              )}
-                             {options.map((item: BaseComponent & { price?: number }) => (
-                                <option key={item.name} value={item.name}>
-                                    {item.brand ? `${item.brand} ` : ''}{item.name} {item.price ? `($${item.price.toFixed(2)})` : ''}
-                                </option>
-                            ))}
+                             {options.map((item: BaseComponent & { price?: number }) => {
+                                // Fix for brand duplication applied here too
+                                const nameIncludesBrand = item.brand && item.name.toLowerCase().startsWith(item.brand.toLowerCase() + ' ');
+                                return (
+                                    <option key={item.name} value={item.name}>
+                                        {!nameIncludesBrand && item.brand ? `${item.brand} ` : ''}{item.name} {item.price ? `($${item.price.toFixed(2)})` : ''}
+                                    </option>
+                                );
+                             })}
                         </select>
                     </div>
                 );
