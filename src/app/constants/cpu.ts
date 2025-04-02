@@ -733,390 +733,389 @@ export const cpus: CPU[] = [
     integratedGraphics: true, // Intel Graphics (Xe-LPG)
     price: 589 // Approx RCP / MSRP
   },
-  {
-    name: "AMD Ryzen 3 4300G",
-    brand: 'AMD',
-    coreCount: 4,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 4.0,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 110
-  },
-  {
-    name: "AMD Ryzen 5 3600",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.6,
-    performanceCoreBoostClock: 4.2,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 149
-  },
-  {
-    name: "AMD Ryzen 5 4500",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.6,
-    performanceCoreBoostClock: 4.1,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 80
-  },
-  {
-    name: "AMD Ryzen 5 5500",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.6,
-    performanceCoreBoostClock: 4.2,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 129
-  },
-  {
-    name: "AMD Ryzen 5 5500GT",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.6,
-    performanceCoreBoostClock: 4.4,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 179
-  },
-  {
-    name: "AMD Ryzen 5 5600",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.5,
-    performanceCoreBoostClock: 4.4,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 199
-  },
-  {
-    name: "AMD Ryzen 5 5600G",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.9,
-    performanceCoreBoostClock: 4.4,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 140
-  },
-  {
-    name: "AMD Ryzen 5 5600X",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.7,
-    performanceCoreBoostClock: 4.6,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 169
-  },
-  {
-    name: "AMD Ryzen 7 3800XT",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.9,
-    performanceCoreBoostClock: 4.7,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 429
-  },
-  {
-    name: "AMD Ryzen 7 5700",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.7,
-    performanceCoreBoostClock: 4.6,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: true, // Assumed based on 5700G, verify if needed
-    price: 229
-  },
-  {
-    name: "AMD Ryzen 7 5700G",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 4.6,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 329
-  },
-  {
-    name: "AMD Ryzen 7 5700X",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.4,
-    performanceCoreBoostClock: 4.6,
-    microarchitecture: "AM4",
-    tdp: 65,
-    integratedGraphics: false,
-    price: 269
-  },
-  {
-    name: "AMD Ryzen 7 5700X3D",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.0,
-    performanceCoreBoostClock: 4.1,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 306
-  },
-  {
-    name: "AMD Ryzen 7 5800X",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 4.7,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 210
-  },
-  {
-    name: "AMD Ryzen 7 5800X3D",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.4,
-    performanceCoreBoostClock: 4.5,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 320
-  },
-  {
-    name: "AMD Ryzen 9 5900X",
-    brand: 'AMD',
-    coreCount: 12,
-    performanceCoreClock: 3.7,
-    performanceCoreBoostClock: 4.8,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 300
-  },
-  {
-    name: "AMD Ryzen 9 5950X",
-    brand: 'AMD',
-    coreCount: 16,
-    performanceCoreClock: 3.4,
-    performanceCoreBoostClock: 4.9,
-    microarchitecture: "AM4",
-    tdp: 105,
-    integratedGraphics: false,
-    price: 380
-  },
-  // AM5 Socket
-  {
-    name: "AMD Ryzen 5 7600",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 5.1,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 185
-  },
-  {
-    name: "AMD Ryzen 5 7600X",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 4.7,
-    performanceCoreBoostClock: 5.3,
-    microarchitecture: "AM5",
-    tdp: 105,
-    integratedGraphics: true,
-    price: 192
-  },
-  {
-    name: "AMD Ryzen 7 7700",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 5.3,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 310
-  },
-  {
-    name: "AMD Ryzen 7 7700X",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 4.5,
-    performanceCoreBoostClock: 5.4,
-    microarchitecture: "AM5",
-    tdp: 105,
-    integratedGraphics: true,
-    price: 288
-  },
-  {
-    name: "AMD Ryzen 7 7800X3D",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 4.2,
-    performanceCoreBoostClock: 5.0,
-    microarchitecture: "AM5",
-    tdp: 120,
-    integratedGraphics: true,
-    price: 439
-  },
-  {
-    name: "AMD Ryzen 9 7900",
-    brand: 'AMD',
-    coreCount: 12,
-    performanceCoreClock: 3.7,
-    performanceCoreBoostClock: 5.4,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true,
-    price: 326
-  },
-  {
-    name: "AMD Ryzen 9 7900X",
-    brand: 'AMD',
-    coreCount: 12,
-    performanceCoreClock: 4.7,
-    performanceCoreBoostClock: 5.6,
-    microarchitecture: "AM5",
-    tdp: 170,
-    integratedGraphics: true,
-    price: 336
-  },
-  {
-    name: "AMD Ryzen 9 7900X3D",
-    brand: 'AMD',
-    coreCount: 12,
-    performanceCoreClock: 4.4,
-    performanceCoreBoostClock: 5.6,
-    microarchitecture: "AM5",
-    tdp: 120,
-    integratedGraphics: true,
-    price: 451
-  },
-  {
-    name: "AMD Ryzen 9 7950X",
-    brand: 'AMD',
-    coreCount: 16,
-    performanceCoreClock: 4.5,
-    performanceCoreBoostClock: 5.7,
-    microarchitecture: "AM5",
-    tdp: 170,
-    integratedGraphics: true,
-    price: 432
-  },
-  {
-    name: "AMD Ryzen 9 7950X3D",
-    brand: 'AMD',
-    coreCount: 16,
-    performanceCoreClock: 4.2,
-    performanceCoreBoostClock: 5.7,
-    microarchitecture: "AM5",
-    tdp: 120,
-    integratedGraphics: true,
-    price: 575
-  },
-  {
-    name: "AMD Ryzen 5 8500G",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.55,
-    performanceCoreBoostClock: 5.0,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true, // Radeon 740M
-    price: 179
-  },
-  {
-    name: "AMD Ryzen 5 8600G",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 4.35,
-    performanceCoreBoostClock: 5.0,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true, // Radeon 760M
-    price: 229
-  },
-  {
-    name: "AMD Ryzen 7 8700G",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 4.2,
-    performanceCoreBoostClock: 5.1,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true, // Radeon 780M
-    price: 329
-  },
-  {
-    name: "AMD Ryzen 5 9600X",
-    brand: 'AMD',
-    coreCount: 6,
-    performanceCoreClock: 3.9,
-    performanceCoreBoostClock: 5.4,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true, // Assumed for Zen 5 non-G
-    price: 229 // Tom's Hardware approx
-  },
-  {
-    name: "AMD Ryzen 7 9700X",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 3.8,
-    performanceCoreBoostClock: 5.5,
-    microarchitecture: "AM5",
-    tdp: 65,
-    integratedGraphics: true, // Assumed for Zen 5 non-G
-    price: 306 // Tom's Hardware approx
-  },
-  {
-    name: "AMD Ryzen 7 9800X3D",
-    brand: 'AMD',
-    coreCount: 8,
-    performanceCoreClock: 4.7,
-    performanceCoreBoostClock: 5.2,
-    microarchitecture: "AM5",
-    tdp: 120,
-    integratedGraphics: true, // Assumed for Zen 5 non-G
-    price: 479 // Tom's Hardware approx
-  },
-  {
-    name: "AMD Ryzen 9 9900X",
-    brand: 'AMD',
-    coreCount: 12,
-    performanceCoreClock: 4.4,
-    performanceCoreBoostClock: 5.6,
-    microarchitecture: "AM5",
-    tdp: 120,
-    integratedGraphics: true, // Assumed for Zen 5 non-G
-    price: 408 // Tom's Hardware approx
-  },
-  {
-    name: "AMD Ryzen 9 9950X",
-    brand: 'AMD',
-    coreCount: 16,
-    performanceCoreClock: 4.3,
-    performanceCoreBoostClock: 5.7,
-    microarchitecture: "AM5",
-    tdp: 170,
-    integratedGraphics: true, // Assumed for Zen 5 non-G
-    price: 544 // Tom's Hardware approx
-  }
-];
+    {
+      name: "Ryzen 3 4300G",
+      brand: 'AMD',
+      coreCount: 4,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 4.0,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 110
+    },
+    {
+      name: "Ryzen 5 3600",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.6,
+      performanceCoreBoostClock: 4.2,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 149
+    },
+    {
+      name: "Ryzen 5 4500",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.6,
+      performanceCoreBoostClock: 4.1,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 80
+    },
+    {
+      name: "Ryzen 5 5500",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.6,
+      performanceCoreBoostClock: 4.2,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 129
+    },
+    {
+      name: "Ryzen 5 5500GT",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.6,
+      performanceCoreBoostClock: 4.4,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 179
+    },
+    {
+      name: "Ryzen 5 5600",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.5,
+      performanceCoreBoostClock: 4.4,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 199
+    },
+    {
+      name: "Ryzen 5 5600G",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.9,
+      performanceCoreBoostClock: 4.4,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 140
+    },
+    {
+      name: "Ryzen 5 5600X",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.7,
+      performanceCoreBoostClock: 4.6,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 169
+    },
+    {
+      name: "Ryzen 5 7600",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 5.1,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 185
+    },
+    {
+      name: "Ryzen 5 7600X",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 4.7,
+      performanceCoreBoostClock: 5.3,
+      microarchitecture: "AM5",
+      tdp: 105,
+      integratedGraphics: true,
+      price: 192
+    },
+    {
+      name: "Ryzen 5 8500G",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.55,
+      performanceCoreBoostClock: 5.0,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 179
+    },
+    {
+      name: "Ryzen 5 8600G",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 4.35,
+      performanceCoreBoostClock: 5.0,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 229
+    },
+    {
+      name: "Ryzen 5 9600X",
+      brand: 'AMD',
+      coreCount: 6,
+      performanceCoreClock: 3.9,
+      performanceCoreBoostClock: 5.4,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 229
+    },
+    {
+      name: "Ryzen 7 3800XT",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.9,
+      performanceCoreBoostClock: 4.7,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 429
+    },
+    {
+      name: "Ryzen 7 5700",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.7,
+      performanceCoreBoostClock: 4.6,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 229
+    },
+    {
+      name: "Ryzen 7 5700G",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 4.6,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 329
+    },
+    {
+      name: "Ryzen 7 5700X",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.4,
+      performanceCoreBoostClock: 4.6,
+      microarchitecture: "AM4",
+      tdp: 65,
+      integratedGraphics: false,
+      price: 269
+    },
+    {
+      name: "Ryzen 7 5700X3D",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.0,
+      performanceCoreBoostClock: 4.1,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 306
+    },
+    {
+      name: "Ryzen 7 5800X",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 4.7,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 210
+    },
+    {
+      name: "Ryzen 7 5800X3D",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.4,
+      performanceCoreBoostClock: 4.5,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 320
+    },
+    {
+      name: "Ryzen 7 7700",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 5.3,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 310
+    },
+    {
+      name: "Ryzen 7 7700X",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 4.5,
+      performanceCoreBoostClock: 5.4,
+      microarchitecture: "AM5",
+      tdp: 105,
+      integratedGraphics: true,
+      price: 288
+    },
+    {
+      name: "Ryzen 7 7800X3D",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 4.2,
+      performanceCoreBoostClock: 5.0,
+      microarchitecture: "AM5",
+      tdp: 120,
+      integratedGraphics: true,
+      price: 439
+    },
+    {
+      name: "Ryzen 7 8700G",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 4.2,
+      performanceCoreBoostClock: 5.1,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 329
+    },
+    {
+      name: "Ryzen 7 9700X",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 3.8,
+      performanceCoreBoostClock: 5.5,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 306
+    },
+    {
+      name: "Ryzen 7 9800X3D",
+      brand: 'AMD',
+      coreCount: 8,
+      performanceCoreClock: 4.7,
+      performanceCoreBoostClock: 5.2,
+      microarchitecture: "AM5",
+      tdp: 120,
+      integratedGraphics: true,
+      price: 479
+    },
+    {
+      name: "Ryzen 9 5900X",
+      brand: 'AMD',
+      coreCount: 12,
+      performanceCoreClock: 3.7,
+      performanceCoreBoostClock: 4.8,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 300
+    },
+    {
+      name: "Ryzen 9 5950X",
+      brand: 'AMD',
+      coreCount: 16,
+      performanceCoreClock: 3.4,
+      performanceCoreBoostClock: 4.9,
+      microarchitecture: "AM4",
+      tdp: 105,
+      integratedGraphics: false,
+      price: 380
+    },
+    {
+      name: "Ryzen 9 7900",
+      brand: 'AMD',
+      coreCount: 12,
+      performanceCoreClock: 3.7,
+      performanceCoreBoostClock: 5.4,
+      microarchitecture: "AM5",
+      tdp: 65,
+      integratedGraphics: true,
+      price: 326
+    },
+    {
+      name: "Ryzen 9 7900X",
+      brand: 'AMD',
+      coreCount: 12,
+      performanceCoreClock: 4.7,
+      performanceCoreBoostClock: 5.6,
+      microarchitecture: "AM5",
+      tdp: 170,
+      integratedGraphics: true,
+      price: 336
+    },
+    {
+      name: "Ryzen 9 7900X3D",
+      brand: 'AMD',
+      coreCount: 12,
+      performanceCoreClock: 4.4,
+      performanceCoreBoostClock: 5.6,
+      microarchitecture: "AM5",
+      tdp: 120,
+      integratedGraphics: true,
+      price: 451
+    },
+    {
+      name: "Ryzen 9 7950X",
+      brand: 'AMD',
+      coreCount: 16,
+      performanceCoreClock: 4.5,
+      performanceCoreBoostClock: 5.7,
+      microarchitecture: "AM5",
+      tdp: 170,
+      integratedGraphics: true,
+      price: 432
+    },
+    {
+      name: "Ryzen 9 7950X3D",
+      brand: 'AMD',
+      coreCount: 16,
+      performanceCoreClock: 4.2,
+      performanceCoreBoostClock: 5.7,
+      microarchitecture: "AM5",
+      tdp: 120,
+      integratedGraphics: true,
+      price: 575
+    },
+    {
+      name: "Ryzen 9 9900X",
+      brand: 'AMD',
+      coreCount: 12,
+      performanceCoreClock: 4.4,
+      performanceCoreBoostClock: 5.6,
+      microarchitecture: "AM5",
+      tdp: 120,
+      integratedGraphics: true,
+      price: 408
+    },
+    {
+      name: "Ryzen 9 9950X",
+      brand: 'AMD',
+      coreCount: 16,
+      performanceCoreClock: 4.3,
+      performanceCoreBoostClock: 5.7,
+      microarchitecture: "AM5",
+      tdp: 170,
+      integratedGraphics: true,
+      price: 544
+    }
+  ]
