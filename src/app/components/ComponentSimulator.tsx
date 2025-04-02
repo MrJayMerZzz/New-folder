@@ -192,8 +192,8 @@ const ComponentSimulator = () => {
     // CPU <-> Motherboard Socket Check
     if (selectedCpuObject && selectedMotherboardObject && selectedCpuObject.microarchitecture !== selectedMotherboardObject.socket) {
       issues.push({
-        message: `CPU (${selectedCpuObject.brand || ''} <span class="math-inline">\{selectedCpuObject\.name\}\) socket \(</span>{selectedCpuObject.microarchitecture}) doesn't match Motherboard (${selectedMotherboardObject.brand || ''} <span class="math-inline">\{selectedMotherboardObject\.name\}\) socket \(</span>{selectedMotherboardObject.socket}).`,
-        involvedKeys: ['cpu', 'motherboard']
+      message: `CPU (${selectedCpuObject.brand || ''} ${selectedCpuObject.name}) socket (${selectedCpuObject.microarchitecture}) doesn't match Motherboard (${selectedMotherboardObject.brand || ''} ${selectedMotherboardObject.name}) socket (${selectedMotherboardObject.socket}).`,
+      involvedKeys: ['cpu', 'motherboard']
       });
     }
 
@@ -219,9 +219,8 @@ const ComponentSimulator = () => {
     // Motherboard Form Factor vs Case Check
     if (selectedMotherboardObject && selectedCaseObject && selectedCaseObject.supportedFormFactors && !selectedCaseObject.supportedFormFactors.includes(selectedMotherboardObject.formFactor)) {
       issues.push({
-        // --- CHECK THIS LINE: Make sure it starts and ends with ` ---
-        message: `Motherboard form factor (${selectedMotherboardObject.formFactor}) may not fit in the Case (${selectedCaseObject.name}). Check case specs.`,
-        involvedKeys: ['motherboard', 'case']
+      message: `Motherboard form factor (${selectedMotherboardObject.formFactor}) may not fit in the Case (${selectedCaseObject.name}). Check case specs.`,
+      involvedKeys: ['motherboard', 'case']
       });
     }
 
