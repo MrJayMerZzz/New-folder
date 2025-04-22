@@ -8,7 +8,6 @@ const Header: React.FC = () => {
   // ... (productCategories data remains the same)
   const productCategories = [
       {
-        title: 'Components',
         items: [
             { name: 'CPUs', href: '#' },
             { name: 'CPU Coolers', href: '#' },
@@ -19,39 +18,39 @@ const Header: React.FC = () => {
             { name: 'Power Supplies', href: '#' },
             { name: 'Cases', href: '#' },
         ]
-      },
-      {
-        title: 'Peripherals',
-        items: [
-            { name: 'Headphones', href: '#' },
-            { name: 'Keyboards', href: '#' },
-            { name: 'Mice', href: '#' },
-            { name: 'Speakers', href: '#' },
-            { name: 'Webcams', href: '#' },
-        ],
-      },
-      {
-        title: 'Expansion',
-        items: [
-            { name: 'Monitors', href: '#' },
-            { name: 'Software', href: '#' },
-            { name: 'Operating Systems', href: '#' },
-        ],
-      },
-      {
-        title: 'Accessories',
-        items: [
-            { name: 'Sound Cards', href: '#' },
-            { name: 'Wired Networking', href: '#' },
-            { name: 'Wireless Networking', href: '#' },
-            { name: 'Case Fans', href: '#' },
-            { name: 'Fan Controllers', href: '#' },
-            { name: 'Thermal Compound', href: '#' },
-            { name: 'External Hard Drives', href: '#' },
-            { name: 'Optical Drives', href: '#' },
-            { name: 'Removable Storage', href: '#' },
-        ],
-      },
+      }//,
+      //{
+        //title: 'Peripherals',
+        //items: [
+            //{ name: 'Headphones', href: '#' },
+            //{ name: 'Keyboards', href: '#' },
+            //{ name: 'Mice', href: '#' },
+            //{ name: 'Speakers', href: '#' },
+            //{ name: 'Webcams', href: '#' },
+        //],
+      //},
+     // {
+        //title: 'Expansion',
+        //items: [
+            //{ name: 'Monitors', href: '#' },
+            //{ name: 'Software', href: '#' },
+            //{ name: 'Operating Systems', href: '#' },
+        //],
+      //},
+      //{
+        //title: 'Accessories',
+        //items: [
+            //{ name: 'Sound Cards', href: '#' },
+            //{ name: 'Wired Networking', href: '#' },
+            //{ name: 'Wireless Networking', href: '#' },
+            //{ name: 'Case Fans', href: '#' },
+            //{ name: 'Fan Controllers', href: '#' },
+            //{ name: 'Thermal Compound', href: '#' },
+            //{ name: 'External Hard Drives', href: '#' },
+            //{ name: 'Optical Drives', href: '#' },
+            //{ name: 'Removable Storage', href: '#' },
+        //],
+      //},
   ];
 
   const displayCategories = productCategories;
@@ -60,10 +59,10 @@ const Header: React.FC = () => {
    const navItems = [
      { name: 'Builder', href: '#', hasDropdown: false },
      { name: 'Products', href: '#', hasDropdown: true },
-     { name: 'Guides', href: '#', hasDropdown: false },
-     { name: 'Completed Builds', href: '#', hasDropdown: false },
-     { name: 'Trends', href: '#', hasDropdown: false },
-     { name: 'Benchmarks', href: '#', hasDropdown: false },
+     { name: 'Guides', href: '#', hasDropdown: false }//,
+     //{ name: 'Completed Builds', href: '#', hasDropdown: false },
+     //{ name: 'Trends', href: '#', hasDropdown: false },
+     //{ name: 'Benchmarks', href: '#', hasDropdown: false },
    ];
 
 
