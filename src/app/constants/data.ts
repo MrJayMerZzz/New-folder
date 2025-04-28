@@ -1,27 +1,28 @@
-import { cpus } from "./cpu";
-import { motherboards } from "./motherboard";
-import { ram } from "./ram";
-import { gpus } from "./gpu";
-import { cases } from "./case";
-import { psus } from "./psu";
-import { coolers } from "./cooler";
-import { storages } from "./storage";
-// import { operatingSystems } from './os';
+// constants/data.ts
 
-export type CPU = { name: string; microarchitecture: string; tdp: number; /* ... */ };
-export type CPUCooler = { name: string; /* ... */ };
-export type Motherboard = { name: string; socket: string; memorySlots: number; formFactor: string; /* ... */ };
-export type RAM = { name: string; modules: number; /* ... */ };
-export type StorageDevice = { name: string; /* ... */ };
-export type GPU = { name: string; tdp: number; /* ... */ };
-export type Case = { name: string; /* ... */ };
-export type PowerSupply = { name: string; wattage: number; /* ... */ };
-// export type OperatingSystem = { name: string; /* ... */ };
+// Import data arrays AND their full types
+import { type CPU, cpus } from './cpu';
+import { type Motherboard, motherboards } from './motherboard'; // <<< IMPORT the type here
+import { type RAM, ram } from './ram'; // Assuming ram.ts exports data as 'ram'
+import { type GPU, gpus } from './gpu'; // Assuming gpu.ts exports data as 'gpus'
+import { type Case, cases } from './case';
+import { type PSU, psus } from './psu';
+import { type CPUCooler, coolers } from './cooler'; // Assuming cooler.ts exports type/data
+import { type StorageDevice, storages } from './storage'; // Assuming storage.ts exports type/data
 
+// --- REMOVE the local type definitions ---
+// export type CPU = { ... }; <<< REMOVE
+// export type Motherboard = { ... }; <<< REMOVE
+// export type RAM = { ... }; <<< REMOVE
+// export type GPU = { ... }; <<< REMOVE
+// ... remove other local type definitions ...
+
+
+// Create the map using the imported data
 export const componentDataMap = {
   cpu: cpus,
   cpuCooler: coolers,
-  motherboard: motherboards,
+  motherboard: motherboards, // Uses imported data
   memory: ram,
   storage: storages,
   videoCard: gpus,
@@ -30,10 +31,16 @@ export const componentDataMap = {
   // operatingSystem: operatingSystems,
 } as const;
 
+// Define the type for the keys of the componentDataMap
 export type ComponentTypeKey = keyof typeof componentDataMap;
 
-export const getComponentData = (key: ComponentTypeKey) => {
-  return componentDataMap[key];
-};
+// Union type using the IMPORTED types
+export type AnyComponent = CPU | CPUCooler | Motherboard | RAM | StorageDevice | GPU | Case | PSU;
 
-// export type { CPU, Motherboard, RAM, GPU, Case, PowerSupply, CPUCooler, StorageDevice }; // Optional export
+// Re-export the IMPORTED types so other components can use them from data.ts
+export type { CPU, GPU, RAM, Motherboard, StorageDevice, PSU, Case, CPUCooler };
+
+// Utility function (optional, but can be useful)
+export const getComponentData = (key: ComponentTypeKey) => {
+  return componentDataMap[key] as AnyComponent[];
+};
