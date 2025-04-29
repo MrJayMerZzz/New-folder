@@ -1,8 +1,8 @@
-/*"use client";
+"use client";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Guide from "./components/Guide";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Guide from "../components/Guide";
 
 export default function Home() {
   return (
@@ -12,4 +12,4 @@ export default function Home() {
       <Footer />
     </div>
   );
-}*/
+}

@@ -10,13 +10,6 @@ import { type PSU, psus } from './psu';
 import { type CPUCooler, coolers } from './cooler'; // Assuming cooler.ts exports type/data
 import { type StorageDevice, storages } from './storage'; // Assuming storage.ts exports type/data
 
-// --- REMOVE the local type definitions ---
-// export type CPU = { ... }; <<< REMOVE
-// export type Motherboard = { ... }; <<< REMOVE
-// export type RAM = { ... }; <<< REMOVE
-// export type GPU = { ... }; <<< REMOVE
-// ... remove other local type definitions ...
-
 
 // Create the map using the imported data
 export const componentDataMap = {
