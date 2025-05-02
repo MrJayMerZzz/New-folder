@@ -7,16 +7,26 @@ export type Case = {
   sidePanel: string; // e.g., 'Tempered Glass', 'Solid', 'Mesh'
   externalVolume: number | null; // Approx volume in Liters
   internal35Bays: number;
-  // --- Added Fields ---
   supportedFormFactors: string[]; // Array like: ["ATX", "Micro-ATX", "Mini-ITX"]
   maxGpuLength: number | null; // Max GPU length in mm, null if not applicable/unknown
+
+  // --- Added Fields for Cooler Compatibility ---
+  maxCoolerHeight: number | null; // Max CPU Air Cooler height in mm
+  supportedRadiatorLocations?: { // Details on radiator fitment
+      top?: number[];     // Sizes supported in top mount (e.g., [120, 240, 360])
+      front?: number[];   // Sizes supported in front mount
+      rear?: number[];    // Sizes supported in rear mount
+      side?: number[];    // Sizes supported in side mount
+      bottom?: number[];  // Sizes supported in bottom mount
+  };
   // --- End Added Fields ---
+
   price: number; // Example price in USD
 };
 
 export const cases: Case[] =
   [
-    // --- Original Cases ---
+    // --- Original Cases Updated ---
     {
       name: "MasterBox Q300L",
       brand: "Cooler Master",
@@ -24,10 +34,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Acrylic",
-      externalVolume: 39.2, // Approx volume from original data
+      externalVolume: 39.2,
       internal35Bays: 1,
-      supportedFormFactors: ["Micro-ATX", "Mini-ITX"], // Based on specs
-      maxGpuLength: 360, // From specs
+      supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
+      maxGpuLength: 360,
+      maxCoolerHeight: 159,
+      supportedRadiatorLocations: { front: [120, 240], rear: [120] },
       price: 50
     },
     {
@@ -39,8 +51,10 @@ export const cases: Case[] =
       sidePanel: "Tempered Glass",
       externalVolume: 45.3,
       internal35Bays: 2,
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"], // Supports E-ATX (305mm x 277mm)
-      maxGpuLength: 360, // From specs
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      maxGpuLength: 360,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280], rear: [120] },
       price: 95
     },
     {
@@ -52,52 +66,58 @@ export const cases: Case[] =
       sidePanel: "Tempered Glass",
       externalVolume: 39.7,
       internal35Bays: 2,
-      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"], // B&H specs list Mini-ATX, assuming Mini-ITX
-      maxGpuLength: 341, // With front fans installed (up to 360mm without)
+      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
+      maxGpuLength: 341, // With front fans
+      maxCoolerHeight: 169,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120], bottom: [120] },
       price: 110
     },
     {
-      name: "Chopin Pro", // Removed sample 10
+      name: "Chopin Pro",
       brand: "In Win",
       type: "Mini ITX Slim",
       color: "Titanium Grey",
-      psuIncluded: true, // Comes with a 200W PSU
+      psuIncluded: true, // 200W PSU
       sidePanel: "Solid/Mesh",
       externalVolume: 4.4,
       internal35Bays: 0,
-      supportedFormFactors: ["Mini-ITX"], // Specific to ITX
-      maxGpuLength: null, // Generally no dedicated GPU space in such slim cases, use null
+      supportedFormFactors: ["Mini-ITX"],
+      maxGpuLength: null, // No dedicated GPU slot
+      maxCoolerHeight: 43, // Very low profile needed
+      supportedRadiatorLocations: { }, // No radiator support
       price: 130
     },
     {
-      name: "Lancool II Mesh C Performance", // RGB variant info used for specs
+      name: "Lancool II Mesh C Performance",
       brand: "Lian Li",
       type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 59.0, // Approx volume from original data
-      internal35Bays: 3, // Drive cage holds 3x 3.5" or 3x 2.5"
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"], // Supports E-ATX (up to 280mm wide)
-      maxGpuLength: 384, // From specs
+      externalVolume: 59.0,
+      internal35Bays: 3,
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      maxGpuLength: 384,
+      maxCoolerHeight: 176,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240] },
       price: 105
     },
     {
-      name: "H5 Flow", // 2024 version specs used
+      name: "H5 Flow",
       brand: "NZXT",
       type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 46.4, // Approx volume from original data
-      internal35Bays: 1, // 1x 3.5" bay mentioned
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"], // Supports E-ATX (Up to 277mm wide)
-      maxGpuLength: 410, // From KitGuru review (2024 version)
+      externalVolume: 46.4,
+      internal35Bays: 1,
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      maxGpuLength: 410, // KitGuru review / NZXT site differs slightly (365mm) - using NZXT spec for safety
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 240], rear: [120] },
       price: 85
     },
-    // --- End Original Cases ---
-
-    // --- 50 New Cases Start Here ---
+    // --- 50 New Cases Updated ---
     {
       name: "Define 7",
       brand: "Fractal Design",
@@ -106,9 +126,11 @@ export const cases: Case[] =
       psuIncluded: false,
       sidePanel: "Tempered Glass",
       externalVolume: 51.6,
-      internal35Bays: 6, // Highly configurable
+      internal35Bays: 6,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 467, // Open layout
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360, 420], rear: [120], bottom: [120, 140, 240, 280] },
       price: 170
     },
     {
@@ -118,10 +140,12 @@ export const cases: Case[] =
       color: "White",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 52.0, // Approx.
-      internal35Bays: 2, // Can add more cages
+      externalVolume: 52.0,
+      internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 426,
+      maxCoolerHeight: 167,
+      supportedRadiatorLocations: { top: [120, 140, 240, 280, 360], side: [120, 140, 240, 280, 360], bottom: [120, 140, 240, 280, 360], rear: [120] },
       price: 160
     },
     {
@@ -135,6 +159,8 @@ export const cases: Case[] =
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 400,
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], rear: [120, 140] },
       price: 130
     },
     {
@@ -147,7 +173,9 @@ export const cases: Case[] =
       externalVolume: 59.3,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
-      maxGpuLength: 400, // Can be 420mm depending on config
+      maxGpuLength: 400, // Spec sheet says 420mm
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], side: [120, 240, 360], rear: [120] },
       price: 155
     },
     {
@@ -161,6 +189,8 @@ export const cases: Case[] =
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "SSI-EEB", "SSI-CEB"],
       maxGpuLength: 423, // With front fans
+      maxCoolerHeight: 188,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420], bottom: [120, 140, 240, 280, 360, 420], rear: [120, 140] },
       price: 200
     },
     {
@@ -174,6 +204,8 @@ export const cases: Case[] =
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 405,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 240], rear: [120] },
       price: 80
     },
     {
@@ -181,13 +213,15 @@ export const cases: Case[] =
       brand: "Cooler Master",
       type: "Mini ITX Tower",
       color: "Grey",
-      psuIncluded: true, // 850W SFX PSU included
-      sidePanel: "Tempered Glass / Vented Steel", // Both included
+      psuIncluded: true, // 850W SFX PSU + 280mm AIO
+      sidePanel: "Tempered Glass / Vented Steel",
       externalVolume: 18.3,
-      internal35Bays: 1, // Or 2x 2.5"
-      supportedFormFactors: ["Mini-ITX"],
-      maxGpuLength: 336, // Depending on config
-      price: 350 // Includes PSU and AIO
+      internal35Bays: 1,
+      supportedFormFactors: ["Mini-ITX", "Mini-DTX"], // Spec added Mini-DTX
+      maxGpuLength: 336,
+      maxCoolerHeight: 67, // If replacing included AIO
+      supportedRadiatorLocations: { top: [240, 280] }, // Comes with 280mm AIO installed
+      price: 350
     },
     {
       name: "P360A",
@@ -196,10 +230,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 40.0, // Approx.
+      externalVolume: 40.0,
       internal35Bays: 2,
-      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
+      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"], // E-ATX up to 280mm wide
       maxGpuLength: 400,
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 240], rear: [120] },
       price: 70
     },
     {
@@ -209,10 +245,12 @@ export const cases: Case[] =
       color: "White",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 44.0, // Approx.
+      externalVolume: 44.0,
       internal35Bays: 2,
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"], // E-ATX up to 280mm wide
       maxGpuLength: 400,
+      maxCoolerHeight: 162,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], rear: [120] },
       price: 90
     },
     {
@@ -222,23 +260,27 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 47.1, // Approx.
+      externalVolume: 47.1,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 380,
+      maxCoolerHeight: 175,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280], rear: [120, 140] },
       price: 80
     },
-     {
+      {
       name: "Lancool 216",
       brand: "Lian Li",
       type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 55.0, // Approx.
+      externalVolume: 55.0,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 392,
+      maxCoolerHeight: 180,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], rear: [120], bottom: [120, 240] },
       price: 100
     },
     {
@@ -252,6 +294,8 @@ export const cases: Case[] =
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 369,
+      maxCoolerHeight: 190,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120, 140] },
       price: 110
     },
     {
@@ -261,10 +305,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 29.5, // Approx.
+      externalVolume: 29.5,
       internal35Bays: 2,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 350,
+      maxCoolerHeight: 155,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120], rear: [120] },
       price: 55
     },
     {
@@ -274,10 +320,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 44.7, // Similar to Pop Air
+      externalVolume: 44.7,
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 405,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120] },
       price: 70
     },
     {
@@ -287,10 +335,12 @@ export const cases: Case[] =
       color: "Titanium Grey",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 115.0, // Approx.
-      internal35Bays: 9, // Highly flexible
+      externalVolume: 115.0,
+      internal35Bays: 9,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "SSI-EEB", "SSI-CEB"],
       maxGpuLength: 490,
+      maxCoolerHeight: 166,
+      supportedRadiatorLocations: { top: [120, 140, 240, 280, 360, 420], front: [120, 140, 240, 280, 360, 420, 480], bottom: [120, 140, 240, 280, 360, 420, 480], rear: [120, 140], side: [120, 140, 240, 280, 360, 420, 480] },
       price: 500
     },
     {
@@ -300,23 +350,27 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 84.0, // Approx.
-      internal35Bays: 4, // Can add many more
+      externalVolume: 84.0,
+      internal35Bays: 4,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "SSI-EEB"],
       maxGpuLength: 503,
+      maxCoolerHeight: 195,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420, 480], top: [120, 140, 240, 280, 360], rear: [120, 140], bottom: [120, 140, 240, 280, 360], side: [120, 140, 240, 280, 360, 420, 480] },
       price: 170
     },
     {
       name: "Core P3 TG Pro",
       brand: "Thermaltake",
-      type: "ATX Mid Tower", // Open Frame type
+      type: "ATX Mid Tower", // Open Frame
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass", // Open Frame
-      externalVolume: null, // Hard to define for open frame
-      internal35Bays: 2, // Behind motherboard tray
+      externalVolume: null,
+      internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 450, // With reservoir
+      maxCoolerHeight: 180,
+      supportedRadiatorLocations: { side: [120, 140, 240, 280, 360, 420] }, // Motherboard tray side mount
       price: 140
     },
     {
@@ -327,48 +381,56 @@ export const cases: Case[] =
       psuIncluded: false,
       sidePanel: "Mesh",
       externalVolume: 33.0,
-      internal35Bays: 1, // Combo bay
+      internal35Bays: 1,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 338,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { top: [120, 140, 240, 280, 360], rear: [120] },
       price: 80
     },
     {
       name: "SAMA IM01",
       brand: "SAMA",
-      type: "MicroATX Mini Tower", // Similar to NR200 layout but mATX
+      type: "MicroATX Mini Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Vented Steel",
-      externalVolume: 22.0, // Approx.
-      internal35Bays: 2, // Flexible mounting
+      externalVolume: 22.0,
+      internal35Bays: 2,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 335,
+      maxCoolerHeight: 155, // With ATX PSU, 88mm lower if SFX PSU in high position
+      supportedRadiatorLocations: { bottom: [120, 240], side: [120, 240] }, // Side mount requires SFX PSU
       price: 65
     },
     {
       name: "Hyte Y60",
       brand: "Hyte",
-      type: "ATX Mid Tower", // Panoramic style
+      type: "ATX Mid Tower", // Panoramic
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 58.0, // Approx.
+      externalVolume: 58.0,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
-      maxGpuLength: 375, // Vertical mount only, riser included
+      maxGpuLength: 375, // Vertical only
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { top: [120, 140, 240, 280, 360], side: [120, 140, 240, 280], rear: [120] },
       price: 200
     },
-     {
+      {
       name: "TD500 Mesh V2",
       brand: "Cooler Master",
       type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 51.0, // Approx.
+      externalVolume: 51.0,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "SSI-CEB"],
       maxGpuLength: 410,
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], rear: [120] },
       price: 100
     },
     {
@@ -378,10 +440,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 52.0, // Approx.
+      externalVolume: 52.0,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 400,
+      maxCoolerHeight: 180,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360], rear: [120, 140] },
       price: 75
     },
     {
@@ -391,10 +455,12 @@ export const cases: Case[] =
       color: "Gunmetal",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 51.6, // Similar to Define 7
+      externalVolume: 51.6,
       internal35Bays: 6,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 440, // Open layout
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 140, 240, 280, 360, 420], rear: [120, 140], bottom: [120, 140, 240, 280] },
       price: 160
     },
     {
@@ -404,23 +470,27 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 83.0, // Approx.
-      internal35Bays: 4, // Flexible cages
+      externalVolume: 83.0,
+      internal35Bays: 4,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 410,
+      maxCoolerHeight: 190,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420], top: [120, 140, 240, 280, 360, 420], rear: [120, 140], bottom: [120, 240], side: [120, 140, 240, 280, 360, 420] }, // Right side mount
       price: 190
     },
     {
       name: "O11 Air Mini",
       brand: "Lian Li",
-      type: "MicroATX Mid Tower", // Compact ATX/mATX
+      type: "MicroATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 43.0, // Approx.
-      internal35Bays: 2,
-      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"], // Supports standard ATX PSU
+      externalVolume: 43.0,
+      internal35Bays: 2, // plus 2x 2.5" or use space for drives
+      supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 362,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 140, 240, 280], bottom: [120, 140, 240, 280], side: [120, 240], rear: [120] },
       price: 110
     },
     {
@@ -429,11 +499,13 @@ export const cases: Case[] =
       type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
-      sidePanel: "Tempered Glass / Sound Dampened Steel", // Interchangeable
-      externalVolume: 62.0, // Approx.
-      internal35Bays: 3, // Can add more
+      sidePanel: "Tempered Glass / Sound Dampened Steel",
+      externalVolume: 62.0,
+      internal35Bays: 3,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 432, // HDD cage removed
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420], top: [120, 140, 240, 280, 360], rear: [120, 140] },
       price: 180
     },
     {
@@ -443,24 +515,28 @@ export const cases: Case[] =
       color: "Iron Grey",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 56.0, // Approx.
+      externalVolume: 56.0,
       internal35Bays: 2,
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "SSI-CEB"], // E-ATX up to 12"x10.7"
       maxGpuLength: 410,
+      maxCoolerHeight: 167,
+      supportedRadiatorLocations: { front: [120, 140, 200, 240, 280, 360], top: [120, 140, 240], rear: [120] },
       price: 120
     },
     {
       name: "Meshroom S",
       brand: "SSUPD",
-      type: "Mini ITX Tower", // Vertical SFF
+      type: "Mini ITX Tower", // SFF
       color: "Black",
       psuIncluded: false,
       sidePanel: "Mesh",
       externalVolume: 14.9,
-      internal35Bays: 0, // Primarily 2.5" or specific configs
-      supportedFormFactors: ["Mini-ITX"], // Can fit ATX PSU with bracket
-      maxGpuLength: 336, // Depending on config
-      price: 160 // Base price, riser extra
+      internal35Bays: 0, // Needs brackets/specific layout
+      supportedFormFactors: ["Mini-ITX"], // Can fit ATX/mATX with trade-offs
+      maxGpuLength: 336, // Varies with layout
+      maxCoolerHeight: 148, // Varies with layout
+      supportedRadiatorLocations: { side: [120, 140, 240, 280] }, // Often called front/side depending on layout
+      price: 160
     },
     {
       name: "Cylon",
@@ -469,10 +545,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Acrylic",
-      externalVolume: 38.0, // Approx.
+      externalVolume: 38.0,
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 371,
+      maxCoolerHeight: 155,
+      supportedRadiatorLocations: { front: [120], rear: [120] }, // Limited AIO support
       price: 50
     },
     {
@@ -482,24 +560,28 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 30.0, // Approx.
-      internal35Bays: 0, // Optional HDD bracket needed
+      externalVolume: 30.0,
+      internal35Bays: 0, // Needs optional bracket
       supportedFormFactors: ["Mini-ITX"],
       maxGpuLength: 355,
+      maxCoolerHeight: 165, // Or 72mm with vertical GPU
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], side: [120, 240], rear: [120] },
       price: 60
     },
     {
       name: "Node 202",
       brand: "Fractal Design",
-      type: "Mini ITX HTPC", // Console style
+      type: "Mini ITX HTPC",
       color: "Black",
-      psuIncluded: false, // Variant with PSU exists
+      psuIncluded: false,
       sidePanel: "Solid/Mesh",
       externalVolume: 10.2,
       internal35Bays: 0,
       supportedFormFactors: ["Mini-ITX"],
-      maxGpuLength: 310, // Specific height/width limits too
-      price: 80 // Without PSU
+      maxGpuLength: 310,
+      maxCoolerHeight: 56,
+      supportedRadiatorLocations: { }, // No official radiator support
+      price: 80
     },
     {
       name: "iCUE 220T RGB Airflow",
@@ -508,10 +590,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 39.8, // Approx.
+      externalVolume: 39.8,
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 300,
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120] },
       price: 100
     },
     {
@@ -519,13 +603,15 @@ export const cases: Case[] =
       brand: "In Win",
       type: "Mini ITX Tower",
       color: "Black",
-      psuIncluded: true, // 650W Gold PSU included
+      psuIncluded: true, // 650W Gold PSU
       sidePanel: "Tempered Glass",
-      externalVolume: 20.0, // Approx.
+      externalVolume: 20.0,
       internal35Bays: 0,
       supportedFormFactors: ["Mini-ITX"],
       maxGpuLength: 320,
-      price: 200 // Includes PSU and Qi charger
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { rear: [120] }, // Bottom is fans only
+      price: 200
     },
     {
       name: "Matrexx 40 3FS",
@@ -534,36 +620,42 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 30.0, // Approx.
+      externalVolume: 30.0,
       internal35Bays: 2,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 320,
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 140, 240, 280], rear: [120] },
       price: 55
     },
     {
       name: "Q500L",
       brand: "Cooler Master",
-      type: "ATX Mid Tower", // Can be oriented differently
+      type: "ATX Mid Tower",
       color: "Black",
       psuIncluded: false,
       sidePanel: "Acrylic",
-      externalVolume: 39.2, // Same as Q300L
-      internal35Bays: 0, // Combo bays for 2.5" or 1x 3.5"
+      externalVolume: 39.2,
+      internal35Bays: 0, // Combo bays
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 360,
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { top: [120, 240], rear: [120] },
       price: 60
     },
     {
       name: "Core V21",
       brand: "Thermaltake",
-      type: "MicroATX Mini Tower", // Cube style
+      type: "MicroATX Mini Tower", // Cube
       color: "Black",
       psuIncluded: false,
-      sidePanel: "Windowed", // Interchangeable panels
-      externalVolume: 42.6, // Approx.
+      sidePanel: "Windowed",
+      externalVolume: 42.6,
       internal35Bays: 3,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 350,
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 140, 240, 280], rear: [120, 140], bottom: [120, 140], side: [120, 140] }, // Stackable, supports many configs
       price: 70
     },
     {
@@ -573,10 +665,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 27.0, // Approx.
+      externalVolume: 27.0,
       internal35Bays: 1,
       supportedFormFactors: ["Mini-ITX"],
       maxGpuLength: 325,
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120, 240], rear: [120] },
       price: 80
     },
     {
@@ -586,11 +680,13 @@ export const cases: Case[] =
       color: "Alpine White",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 50.0, // Approx.
+      externalVolume: 50.0,
       internal35Bays: 2,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 390,
-      price: 120 // Price when available
+      maxCoolerHeight: 150,
+      supportedRadiatorLocations: { top: [120, 140, 240, 280, 360], front: [120, 140, 240, 280, 360], rear: [120] },
+      price: 120 // Note: EVGA cases are less common now
     },
     {
       name: "Crystal 280X RGB",
@@ -599,23 +695,27 @@ export const cases: Case[] =
       color: "White",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 40.0, // Approx.
+      externalVolume: 40.0,
       internal35Bays: 2,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 300,
+      maxCoolerHeight: 150,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 140, 240, 280], bottom: [120, 140, 240, 280] },
       price: 160
     },
     {
       name: "TU150",
       brand: "Lian Li",
-      type: "Mini ITX Tower", // With handle
+      type: "Mini ITX Tower",
       color: "Silver",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 24.0, // Approx.
-      internal35Bays: 1, // Or 2x 2.5"
+      externalVolume: 24.0,
+      internal35Bays: 1,
       supportedFormFactors: ["Mini-ITX", "Mini-DTX"],
       maxGpuLength: 320,
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120], rear: [120], bottom: [120, 240] },
       price: 110
     },
     {
@@ -625,24 +725,28 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 40.0, // Approx.
+      externalVolume: 40.0,
       internal35Bays: 1,
       supportedFormFactors: ["ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 322, // With front fan
+      maxCoolerHeight: 161,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 240], rear: [120] },
       price: 75
     },
     {
       name: "Revolt 3",
       brand: "Hyte",
-      type: "Mini ITX Tower", // Vertical SFF with handle
+      type: "Mini ITX Tower", // SFF
       color: "White",
-      psuIncluded: false, // Variant with PSU exists
+      psuIncluded: false,
       sidePanel: "Mesh",
       externalVolume: 18.4,
       internal35Bays: 1,
       supportedFormFactors: ["Mini-ITX"],
       maxGpuLength: 335,
-      price: 130 // Without PSU
+      maxCoolerHeight: 140, // Limited by GPU thickness
+      supportedRadiatorLocations: { side: [120, 140, 240, 280] },
+      price: 130
     },
     {
       name: "Shadow Base 800 FX",
@@ -651,10 +755,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 62.0, // Approx. similar to Silent Base 802
-      internal35Bays: 3,
+      externalVolume: 62.0,
+      internal35Bays: 3, // Up to 7 with cages
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 430,
+      maxCoolerHeight: 180,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420], top: [120, 140, 240, 280, 360, 420], rear: [120] },
       price: 170
     },
     {
@@ -664,10 +770,12 @@ export const cases: Case[] =
       color: "White",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 35.0, // Approx.
+      externalVolume: 35.0,
       internal35Bays: 2,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 320,
+      maxCoolerHeight: 165,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120] },
       price: 60
     },
     {
@@ -677,10 +785,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 35.0, // Approx.
+      externalVolume: 35.0,
       internal35Bays: 2, // Combo bays
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 365,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 240], rear: [120] },
       price: 90
     },
     {
@@ -690,10 +800,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass", // Curved
-      externalVolume: 100.0, // Approx.
+      externalVolume: 100.0,
       internal35Bays: 4, // Highly modular
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX", "XL-ATX", "SSI-CEB", "SSI-EEB"], // Added more from spec
       maxGpuLength: 490, // Without HDD cage
+      maxCoolerHeight: 198,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360, 420], top: [120, 140, 240, 280, 360, 420], rear: [120, 140], bottom: [120, 240] },
       price: 350
     },
     {
@@ -703,23 +815,27 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 48.0, // Approx.
+      externalVolume: 48.0,
       internal35Bays: 2,
       supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
       maxGpuLength: 340,
+      maxCoolerHeight: 170,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120] },
       price: 100
     },
     {
       name: "Level 20 VT",
       brand: "Thermaltake",
-      type: "MicroATX Mini Tower", // Cube style
+      type: "MicroATX Mini Tower", // Cube
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 45.0, // Approx.
+      externalVolume: 45.0,
       internal35Bays: 3,
       supportedFormFactors: ["Micro-ATX", "Mini-ITX"],
       maxGpuLength: 350,
+      maxCoolerHeight: 185,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280], top: [120, 140, 240, 280], rear: [120, 140], bottom: [120, 240] },
       price: 100
     },
     {
@@ -728,11 +844,13 @@ export const cases: Case[] =
       type: "Mini ITX Tower",
       color: "Carbon",
       psuIncluded: false,
-      sidePanel: "Solid", // Top panel options vary (wood/glass/mesh)
+      sidePanel: "Solid", // Swappable top panels affect airflow
       externalVolume: 16.0,
-      internal35Bays: 1, // Or 2x 2.5"
+      internal35Bays: 1, // Max 1x 3.5" or 2x 2.5" depending on PSU/Cooling
       supportedFormFactors: ["Mini-ITX"],
-      maxGpuLength: 295, // Height/width limits apply
+      maxGpuLength: 295, // Length/Height/Width constraints
+      maxCoolerHeight: 120, // Or 70mm with 3.5" HDD
+      supportedRadiatorLocations: { top: [120, 240] }, // Thickness constraints apply
       price: 160
     },
     {
@@ -742,12 +860,12 @@ export const cases: Case[] =
       color: "Black",
       psuIncluded: false,
       sidePanel: "Tempered Glass",
-      externalVolume: 43.0, // Approx.
-      internal35Bays: 2,
-      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+      externalVolume: 43.0,
+      internal35Bays: 2, // Need optional brackets for more
+      supportedFormFactors: ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"], // E-ATX up to 272mm wide
       maxGpuLength: 420,
+      maxCoolerHeight: 160,
+      supportedRadiatorLocations: { front: [120, 140, 240, 280, 360], top: [120, 240], rear: [120] }, // Top clearance limited
       price: 90
     }
-    // --- 50 New Cases End Here ---
   ];
-

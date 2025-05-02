@@ -1,4 +1,4 @@
-export type PowerSupply = {
+export type PSU = {
     name: string;
     brand: string; // e.g., 'Corsair', 'EVGA', 'SeaSonic', 'Cooler Master'
     type: string; // Form Factor: Typically 'ATX', could also be 'SFX', 'SFX-L'
@@ -9,7 +9,7 @@ export type PowerSupply = {
     price?: number; // Optional: Price
   };
   
-  export const psus: PowerSupply[] = 
+  export const psus: PSU[] = 
   [
     // 550W
     {
