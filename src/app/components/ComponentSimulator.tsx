@@ -6,7 +6,7 @@ import {
     componentDataMap,
     ComponentTypeKey,
     CPU,
-    Motherboard, // Ensure this type is correctly defined and exported
+    Motherboard,
     RAM,
     GPU,
     PSU,
@@ -14,8 +14,6 @@ import {
     CPUCooler,
     StorageDevice
 } from "../constants/data"; // Adjust path as needed
-
-// Removed redundant alias: type PowerSupply = PSU;
 
 const componentSlots: { key: ComponentTypeKey; label: string }[] = [
     { key: "cpu", label: "CPU" },
@@ -30,7 +28,6 @@ const componentSlots: { key: ComponentTypeKey; label: string }[] = [
 
 type SelectionsState = Partial<Record<ComponentTypeKey, string>>;
 
-// Base type for dropdown rendering and basic checks
 interface BaseComponent {
     name: string;
     brand?: string;
@@ -43,11 +40,7 @@ interface BaseComponent {
     memorySlots?: number;
     modules?: number;
     ddrType?: 'DDR3' | 'DDR4' | 'DDR5';
-
-    // --- Corrected ramType to align with Motherboard ---
     ramType?: Motherboard['ramType'];
-    // --- End Correction ---
-
     length?: number;
     supportedFormFactors?: string[];
     maxGpuLength?: number | null;
@@ -64,7 +57,6 @@ interface BaseComponent {
     color?: string;
 }
 
-// Helper function to check if a case supports a given radiator size
 const caseSupportsRadiator = (caseObj: Case | undefined, radiatorSize: number | null): boolean => {
     if (!caseObj?.supportedRadiatorLocations || radiatorSize == null) {
         return false;
@@ -78,7 +70,6 @@ const caseSupportsRadiator = (caseObj: Case | undefined, radiatorSize: number | 
     return topSupports || frontSupports || rearSupports || sideSupports || bottomSupports;
 };
 
-// Helper function to calculate recommended PSU wattage
 const calculateRecommendedWattage = (
     cpu: CPU | undefined,
     gpu: GPU | undefined,
@@ -120,11 +111,11 @@ const ComponentSimulator = () => {
     const [ramQuantity, setRamQuantity] = useState<number>(1);
     const [storageQuantity, setStorageQuantity] = useState<number>(1);
 
-    // --- Handler Functions ---
     const handleSelection = (field: ComponentTypeKey, value: string) => {
         setSelections((prev) => ({ ...prev, [field]: value }));
-        if (field === 'cpu' && value === '') setSelectedCpuBrand('');
-        if (field === 'videoCard' && value === '') setSelectedGpuBrand('');
+        // Removing these lines as requested to fix brand selection issue
+        // if (field === 'cpu' && value === '') setSelectedCpuBrand('');
+        // if (field === 'videoCard' && value === '') setSelectedGpuBrand('');
     };
     const handleQuantityChange = (field: ComponentTypeKey, value: string) => {
         const quantity = parseInt(value, 10);
@@ -135,15 +126,14 @@ const ComponentSimulator = () => {
     const handleCpuBrandChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const newBrand = event.target.value;
         setSelectedCpuBrand(newBrand);
-        handleSelection('cpu', '');
+        handleSelection('cpu', ''); // Resets CPU *model* when brand changes
     };
     const handleGpuBrandChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const newBrand = event.target.value;
         setSelectedGpuBrand(newBrand);
-        handleSelection('videoCard', '');
+        handleSelection('videoCard', ''); // Resets GPU *model* when brand changes
     };
 
-    // --- Get Selected Objects (Memoized) ---
     const selectedMotherboardObject = useMemo(() => {
         const list = componentDataMap?.motherboard as Motherboard[] | undefined;
         return list?.find(m => m.name === selections.motherboard);
@@ -184,7 +174,6 @@ const ComponentSimulator = () => {
         return list?.find(s => s.name === selections.storage);
     }, [selections.storage]);
 
-    // --- Calculate Recommended Wattage centrally ---
      const recommendedWattage = useMemo(() => {
         const totalRamModules = selectedRamObject?.modules ? selectedRamObject.modules * ramQuantity : ramQuantity * 2;
         return calculateRecommendedWattage(
@@ -196,7 +185,6 @@ const ComponentSimulator = () => {
      }, [selectedCpuObject, selectedGpuObject, selectedRamObject, ramQuantity, storageQuantity]);
      const estimatedWattage = recommendedWattage;
 
-    // --- Calculate Total Price ---
      const totalPrice = useMemo(() => {
         let total = 0;
         const getPrice = (obj: { price?: number | null } | undefined) => obj?.price ?? 0;
@@ -216,8 +204,6 @@ const ComponentSimulator = () => {
         ramQuantity, storageQuantity
      ]);
 
-    // --- Filtered Options Calculation (Memoized) ---
-    // (Filtering useMemo hooks remain the same as before)
     const filteredCpuOptions = useMemo(() => {
         const allCpus: CPU[] = (componentDataMap?.cpu as CPU[] | undefined) ?? [];
         let filtered = allCpus;
@@ -227,7 +213,7 @@ const ComponentSimulator = () => {
         if (isAutoCompatEnabled && selectedMotherboardObject?.socket) {
             filtered = filtered.filter(cpu => cpu.microarchitecture === selectedMotherboardObject.socket);
         }
-        return filtered;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }, [selectedCpuBrand, isAutoCompatEnabled, selectedMotherboardObject]);
 
     const filteredMotherboardOptions = useMemo(() => {
@@ -239,7 +225,7 @@ const ComponentSimulator = () => {
         if (isAutoCompatEnabled && selectedCaseObject?.supportedFormFactors) {
             filtered = filtered.filter(mobo => mobo.formFactor && selectedCaseObject.supportedFormFactors.includes(mobo.formFactor));
         }
-        return filtered;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }, [isAutoCompatEnabled, selectedCpuObject, selectedCaseObject]);
 
     const filteredRamOptions = useMemo(() => {
@@ -248,7 +234,7 @@ const ComponentSimulator = () => {
         if (isAutoCompatEnabled && selectedMotherboardObject?.ramType) {
             filtered = filtered.filter(ram => ram.ddrType === selectedMotherboardObject.ramType);
         }
-        return filtered;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }, [isAutoCompatEnabled, selectedMotherboardObject]);
 
     const filteredGpuOptions = useMemo(() => {
@@ -278,7 +264,7 @@ const ComponentSimulator = () => {
          if (isAutoCompatEnabled && selectedCoolerObject?.type === 'Liquid' && selectedCoolerObject?.radiatorSize != null) {
              filtered = filtered.filter(c => caseSupportsRadiator(c, selectedCoolerObject.radiatorSize));
          }
-        return filtered;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }, [isAutoCompatEnabled, selectedMotherboardObject, selectedGpuObject, selectedCoolerObject]);
 
     const filteredPowerSupplyOptions = useMemo(() => {
@@ -287,7 +273,7 @@ const ComponentSimulator = () => {
         if (isAutoCompatEnabled && recommendedWattage > 0) {
             filtered = allPsus.filter(psu => psu.wattage != null && psu.wattage >= recommendedWattage);
         }
-        return filtered;
+        return filtered.sort((a, b) => (a.wattage ?? 0) - (b.wattage ?? 0) || a.name.localeCompare(b.name));
     }, [isAutoCompatEnabled, recommendedWattage]);
 
     const filteredCpuCoolerOptions = useMemo(() => {
@@ -310,14 +296,11 @@ const ComponentSimulator = () => {
                 return true;
             });
         }
-        return filtered;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }, [isAutoCompatEnabled, selectedCpuObject, selectedMotherboardObject, selectedCaseObject]);
 
-
-    // --- Compatibility Issues Check ---
     const compatibilityIssues = useMemo(() => {
         const issues: { message: string; involvedKeys: ComponentTypeKey[] }[] = [];
-        // ... (Compatibility check logic remains the same as your last full code version) ...
          const cpuName = selectedCpuObject?.name ?? '';
          const cpuBrand = selectedCpuObject?.brand ?? '';
          const cpuSocket = selectedCpuObject?.microarchitecture;
@@ -346,42 +329,42 @@ const ComponentSimulator = () => {
          const psuWattage = selectedPsuObject?.wattage;
 
          if (selectedCpuObject && selectedMotherboardObject && cpuSocket !== moboSocket) {
-             issues.push({ message: `CPU (${cpuBrand} ${cpuName}) socket (<b>${cpuSocket}</b>) doesn't match Motherboard (${moboBrand} ${moboName}) socket (<b>${moboSocket}</b>).`, involvedKeys: ['cpu', 'motherboard'] });
+             issues.push({ message: `CPU (${cpuBrand} <span class="math-inline">\{cpuName\}\) socket \(<b\></span>{cpuSocket}</b>) doesn't match Motherboard (${moboBrand} <span class="math-inline">\{moboName\}\) socket \(<b\></span>{moboSocket}</b>).`, involvedKeys: ['cpu', 'motherboard'] });
          }
          if (ramModules && moboMemSlots && (ramModules * ramQuantity) > moboMemSlots) {
-             issues.push({ message: `Selected RAM quantity (${ramQuantity} x ${ramModules} modules/kit = <b>${ramModules * ramQuantity}</b> total modules) exceeds motherboard slots (<b>${moboMemSlots}</b>).`, involvedKeys: ['memory', 'motherboard'] });
+             issues.push({ message: `Selected RAM quantity (${ramQuantity} x <span class="math-inline">\{ramModules\} modules/kit \= <b\></span>{ramModules * ramQuantity}</b> total modules) exceeds motherboard slots (<b>${moboMemSlots}</b>).`, involvedKeys: ['memory', 'motherboard'] });
          }
          if (ramType && moboRamType && ramType !== moboRamType) {
-             issues.push({ message: `RAM type (<b>${ramType}</b>) is incompatible with Motherboard supported type (<b>${moboRamType}</b>).`, involvedKeys: ['memory', 'motherboard'] });
+             issues.push({ message: `RAM type (<b><span class="math-inline">\{ramType\}</b\>\) is incompatible with Motherboard supported type \(<b\></span>{moboRamType}</b>).`, involvedKeys: ['memory', 'motherboard'] });
          }
          if (moboFormFactor && caseFactors && !caseFactors.includes(moboFormFactor)) {
-             issues.push({ message: `Motherboard form factor (<b>${moboFormFactor}</b>) may not fit in the Case (${caseName}). Supported: ${caseFactors.join(', ')}.`, involvedKeys: ['motherboard', 'case'] });
+             issues.push({ message: `Motherboard form factor (<b><span class="math-inline">\{moboFormFactor\}</b\>\) may not fit in the Case \(</span>{caseName}). Supported: ${caseFactors.join(', ')}.`, involvedKeys: ['motherboard', 'case'] });
          }
          if (gpuLength && caseMaxGpu != null && gpuLength > caseMaxGpu) {
-             issues.push({ message: `GPU (${gpuBrand} ${gpuName}) length (<b>${gpuLength}mm</b>) exceeds Case maximum (<b>${caseMaxGpu}mm</b>).`, involvedKeys: ['videoCard', 'case'] });
+             issues.push({ message: `GPU (${gpuBrand} <span class="math-inline">\{gpuName\}\) length \(<b\></span>{gpuLength}mm</b>) exceeds Case maximum (<b>${caseMaxGpu}mm</b>).`, involvedKeys: ['videoCard', 'case'] });
          } else if (gpuLength && selectedCaseObject && caseMaxGpu === undefined) {
-             issues.push({ message: `Note: Case (${caseName}) maximum GPU length is not specified. Verify compatibility with GPU (${gpuName}, ${gpuLength}mm).`, involvedKeys: ['videoCard', 'case'] });
+             issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) maximum GPU length is not specified\. Verify compatibility with GPU \(</span>{gpuName}, ${gpuLength}mm).`, involvedKeys: ['videoCard', 'case'] });
          }
          if (coolerType === 'Air' && coolerHeight != null && caseMaxCooler != null && coolerHeight > caseMaxCooler) {
-             issues.push({ message: `CPU Cooler (${coolerName}) height (<b>${coolerHeight}mm</b>) exceeds Case maximum clearance (<b>${caseMaxCooler}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
+             issues.push({ message: `CPU Cooler (<span class="math-inline">\{coolerName\}\) height \(<b\></span>{coolerHeight}mm</b>) exceeds Case maximum clearance (<b>${caseMaxCooler}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
          } else if (coolerType === 'Air' && coolerHeight != null && selectedCaseObject && caseMaxCooler === undefined) {
-             issues.push({ message: `Note: Case (${caseName}) maximum CPU cooler height is not specified. Verify compatibility with CPU Cooler (${coolerName}, ${coolerHeight}mm).`, involvedKeys: ['cpuCooler', 'case'] });
+             issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) maximum CPU cooler height is not specified\. Verify compatibility with CPU Cooler \(</span>{coolerName}, ${coolerHeight}mm).`, involvedKeys: ['cpuCooler', 'case'] });
          }
          if (coolerType === 'Liquid' && coolerRadSize != null && selectedCaseObject && !caseSupportsRadiator(selectedCaseObject, coolerRadSize)) {
              if (caseRadLocations !== undefined) {
-                 issues.push({ message: `Case (${caseName}) does not appear to support the selected AIO cooler's radiator size (<b>${coolerRadSize}mm</b>). Check mounting options (Top, Front, Rear, etc.).`, involvedKeys: ['cpuCooler', 'case'] });
+                 issues.push({ message: `Case (<span class="math-inline">\{caseName\}\) does not appear to support the selected AIO cooler's radiator size \(<b\></span>{coolerRadSize}mm</b>). Check mounting options (Top, Front, Rear, etc.).`, involvedKeys: ['cpuCooler', 'case'] });
              } else {
-                 issues.push({ message: `Note: Case (${caseName}) radiator support information is missing. Verify compatibility with AIO Cooler (${coolerName}, ${coolerRadSize}mm).`, involvedKeys: ['cpuCooler', 'case'] });
+                 issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) radiator support information is missing\. Verify compatibility with AIO Cooler \(</span>{coolerName}, ${coolerRadSize}mm).`, involvedKeys: ['cpuCooler', 'case'] });
              }
          }
          if (coolerSockets) {
              const targetSocket = cpuSocket || moboSocket;
              if (targetSocket && !coolerSockets.includes(targetSocket)) {
-                 issues.push({ message: `CPU Cooler (${coolerName}) may not support the selected CPU/Motherboard socket (<b>${targetSocket}</b>). Supported: ${coolerSockets.join(', ')}.`, involvedKeys: ['cpuCooler', 'cpu', 'motherboard'] });
+                 issues.push({ message: `CPU Cooler (<span class="math-inline">\{coolerName\}\) may not support the selected CPU/Motherboard socket \(<b\></span>{targetSocket}</b>). Supported: ${coolerSockets.join(', ')}.`, involvedKeys: ['cpuCooler', 'cpu', 'motherboard'] });
              }
          }
          if (recommendedWattage > 0 && psuWattage != null && psuWattage < recommendedWattage) {
-             issues.push({ message: `Selected PSU (${psuName}) wattage (<b>${psuWattage}W</b>) is below the recommended level (~${recommendedWattage}W) for these components. Consider a higher wattage PSU for stability.`, involvedKeys: ['powerSupply', 'cpu', 'videoCard', 'memory', 'storage'] });
+             issues.push({ message: `Selected PSU (<span class="math-inline">\{psuName\}\) wattage \(<b\></span>{psuWattage}W</b>) is below the recommended level (~${recommendedWattage}W) for these components. Consider a higher wattage PSU for stability.`, involvedKeys: ['powerSupply', 'cpu', 'videoCard', 'memory', 'storage'] });
          }
 
         return issues;
@@ -393,15 +376,12 @@ const ComponentSimulator = () => {
         recommendedWattage
     ]);
 
-    // Helper function to check if a component has an error
     const hasError = (componentKey: ComponentTypeKey): boolean => {
         return (compatibilityIssues || []).some(issue => issue.involvedKeys.includes(componentKey));
     };
 
-    // --- PDF Generation Handler ---
      const generatePdf = () => {
-         // ... (PDF Generation logic remains the same as the last corrected version) ...
-         const doc = new jsPDF();
+          const doc = new jsPDF();
          const lineHeight = 7;
          const startX = 10;
          const pageHeight = doc.internal.pageSize.height;
@@ -426,9 +406,9 @@ const ComponentSimulator = () => {
          addPageIfNeeded();
 
          doc.setFontSize(12);
-         doc.setFont("undefined", 'bold');
+         doc.setFont('helvetica', 'bold');
          doc.text("Selected Components:", startX, currentY);
-         doc.setFont("undefined", 'normal');
+         doc.setFont('helvetica', 'normal');
          currentY += lineHeight;
          addPageIfNeeded();
 
@@ -453,7 +433,7 @@ const ComponentSimulator = () => {
                  const linePriceString = linePrice > 0 ? `$${linePrice.toFixed(2)}` : '';
                  const quantityString = (label === 'Memory' || label === 'Storage') && qty > 1 ? ` (x${qty})` : '';
                  const itemName = obj.name;
-                 let lineText = `${label}: ${itemName}${quantityString} - Price: ${priceString}`;
+                 let lineText = `${label}: <span class="math-inline">\{itemName\}</span>{quantityString} - Price: ${priceString}`;
                  if (linePriceString && quantityString) lineText += ` | Total: ${linePriceString}`;
 
                  let splitText: string | string[] = '';
@@ -522,17 +502,17 @@ const ComponentSimulator = () => {
 
          if (Array.isArray(compatibilityIssues) && compatibilityIssues.length > 0) {
              doc.setFontSize(11);
-             doc.setFont("undefined", 'bold');
+             doc.setFont('helvetica', 'bold');
              doc.setTextColor(200, 0, 0);
              doc.text("Potential Compatibility Issues:", startX, currentY);
-             doc.setFont("undefined", 'normal');
+             doc.setFont('helvetica', 'normal');
              currentY += lineHeight * 0.8;
              addPageIfNeeded();
 
              doc.setFontSize(9);
              doc.setTextColor(0, 0, 0);
              compatibilityIssues.forEach(issue => {
-                 const message = (typeof issue?.message === 'string') ? issue.message.replace(/<\/?span[^>]*>/g, '').replace(/<\/?b>/g, '') : 'Unknown issue';
+                 const message = (typeof issue?.message === 'string') ? issue.message.replace(/<\/?b>/g, '') : 'Unknown issue';
                  const splitIssueText = doc.splitTextToSize(`- ${message}`, 180);
                  addPageIfNeeded();
                  doc.text(Array.isArray(splitIssueText) ? splitIssueText : [splitIssueText], startX + 2, currentY);
@@ -544,20 +524,20 @@ const ComponentSimulator = () => {
 
          if (typeof recommendedWattage === 'number' && recommendedWattage > 0) {
              doc.setFontSize(10);
-             doc.setFont("undefined", 'bold');
+             doc.setFont('helvetica', 'bold');
              doc.text(`Recommended PSU Wattage: ~${recommendedWattage}W`, startX, currentY);
              currentY += lineHeight;
              addPageIfNeeded();
-             doc.setFont("undefined", 'normal');
+             doc.setFont('helvetica', 'normal');
          }
 
          if (typeof totalPrice === 'number' && totalPrice > 0) {
              doc.setFontSize(10);
-             doc.setFont("undefined", 'bold');
+             doc.setFont('helvetica', 'bold');
              doc.text(`Estimated Total Price: $${totalPrice.toFixed(2)}`, startX, currentY);
              currentY += lineHeight;
              addPageIfNeeded();
-             doc.setFont("undefined", 'normal');
+             doc.setFont('helvetica', 'normal');
          }
 
          currentY += lineHeight * 0.5;
@@ -573,38 +553,39 @@ const ComponentSimulator = () => {
 
     // --- Rendering ---
     return (
+        // REMOVED dark mode classes from root div
         <div className="min-h-screen bg-gray-100 p-4 md:p-8 text-gray-800 font-sans">
             {/* Main Content Container */}
             <div className="max-w-5xl mx-auto space-y-6">
+                {/* REMOVED dark mode classes from h1 */}
                 <h1 className="text-3xl font-bold text-center mb-8 text-indigo-700">PC Part Picker Simulator</h1>
 
-                 {/* Compatibility & Wattage Bar */}
-                  <div className={`p-4 rounded-lg mb-6 border text-sm shadow ${
+                 {/* Compatibility & Wattage Bar - Sticky */}
+                  <div className={`p-4 rounded-lg mb-6 border text-sm shadow sticky top-0 z-10 bg-gray-100/90 backdrop-blur-sm ${
                        compatibilityIssues.length > 0
-                           ? 'bg-red-50 border-red-300 text-red-800'
-                           : estimatedWattage > 0 && Object.values(selections).some(val => !!val)
-                           ? 'bg-green-50 border-green-300 text-green-800'
-                           : 'bg-blue-50 border-blue-300 text-blue-800'
+                           ? 'border-red-300 text-red-800 bg-red-50/90'
+                           : (selectedCpuObject || selectedGpuObject)
+                           ? 'border-green-300 text-green-800 bg-green-50/90'
+                           : 'border-blue-300 text-blue-800 bg-blue-50/90'
                      }`}
                      role="alert"
                   >
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                          {/* Status Message Area */}
                           <div>
                               <span className="font-semibold">System Status:</span>{' '}
                               {compatibilityIssues.length > 0
                                   ? <>Found <b>{compatibilityIssues.length}</b> potential compatibility issue(s).</>
-                                  : Object.values(selections).some(val => !!val) && estimatedWattage > 0
+                                  : (selectedCpuObject || selectedGpuObject || selectedMotherboardObject || selectedCaseObject || selectedPsuObject || selectedCoolerObject || selectedRamObject || selectedStorageObject)
                                   ? 'Selected components appear compatible.'
                                   : 'Select components to check compatibility.'}
                           </div>
-                          {/* Wattage and Price Area */}
                           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-right self-end sm:self-center">
-                               {estimatedWattage > 0 && ( <span className="font-semibold whitespace-nowrap">Rec. Wattage: ~{estimatedWattage}W</span> )}
+                               {(selectedCpuObject || selectedGpuObject) ? (
+                                   <span className="font-semibold whitespace-nowrap">Rec. Wattage: ~{estimatedWattage}W</span>
+                               ) : null}
                                {totalPrice > 0 && ( <span className="font-semibold whitespace-nowrap">Total Price: ${totalPrice.toFixed(2)}</span> )}
                           </div>
                       </div>
-                      {/* Compatibility Issues List */}
                       {compatibilityIssues.length > 0 && (
                          <ul className="list-disc pl-5 mt-2 space-y-1 border-t border-red-200 pt-2">
                              {compatibilityIssues.map((issue, index) => (
@@ -615,9 +596,8 @@ const ComponentSimulator = () => {
                   </div>
 
 
-                {/* Controls Area (Toggle Only, Sticky) */}
-                <div className="bg-white p-4 rounded-lg shadow flex items-center justify-end gap-4 sticky top-0 z-10 mb-4 border">
-                    {/* Auto Compatibility Toggle */}
+                {/* Controls Area - NOT Sticky */}
+                <div className="bg-white p-4 rounded-lg shadow flex items-center justify-end gap-4 mb-4 border border-gray-200">
                     <div className="flex items-center">
                         <label htmlFor="autoCompat" className="text-sm font-medium text-gray-700 mr-3 cursor-pointer">
                             Enable Auto-Compatibility Filtering:
@@ -639,7 +619,6 @@ const ComponentSimulator = () => {
                             ></label>
                         </div>
                     </div>
-                     {/* --- BUTTON REMOVED FROM HERE --- */}
                 </div> {/* End Controls Area */}
 
 
@@ -682,13 +661,14 @@ const ComponentSimulator = () => {
                         const isErrored = hasError(key);
                         const currentQuantity = key === 'memory' ? ramQuantity : key === 'storage' ? storageQuantity : 1;
 
+                        // --- Special rendering for CPU slot ---
                         if (key === 'cpu') {
                             return (
                                  <div key={key} className={`grid grid-cols-1 md:grid-cols-[1fr_auto] gap-x-4 items-start bg-white p-4 rounded-lg shadow border ${isErrored ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200'}`}>
                                       <div className="space-y-3">
                                           <div>
                                               <label htmlFor="cpuBrand" className="block text-sm font-medium text-gray-700 mb-1">CPU Brand Filter</label>
-                                              <select id="cpuBrand" name="cpuBrand" value={selectedCpuBrand} onChange={handleCpuBrandChange} className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm">
+                                              <select id="cpuBrand" name="cpuBrand" value={selectedCpuBrand} onChange={handleCpuBrandChange} className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                                                   <option value="">-- All Brands --</option>
                                                   <option value="Intel">Intel</option>
                                                   <option value="AMD">AMD</option>
@@ -698,7 +678,7 @@ const ComponentSimulator = () => {
                                               <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
                                                   {label} Model {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered)</span>}
                                               </label>
-                                              <select id={key} name={key} value={currentSelection} onChange={(e) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm ${isErrored ? 'border-red-400' : ''}`}>
+                                              <select id={key} name={key} value={currentSelection} onChange={(e) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm ${isErrored ? 'border-red-400' : ''}`}>
                                                    <option value="">-- Select a {label} --</option>
                                                    {options.length === 0 && isAutoCompatEnabled && filterDependencyMet && (<option disabled>No compatible CPUs found</option>)}
                                                    {options.map((item) => (
@@ -716,13 +696,14 @@ const ComponentSimulator = () => {
                             );
                         }
 
+                        // --- Special rendering for GPU slot ---
                         if (key === 'videoCard') {
                              return (
                                  <div key={key} className={`grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-x-4 items-start bg-white p-4 rounded-lg shadow border ${isErrored ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200'}`}>
                                       <div className="space-y-3">
                                           <div>
                                               <label htmlFor="gpuBrand" className="block text-sm font-medium text-gray-700 mb-1">GPU Brand Filter</label>
-                                              <select id="gpuBrand" name="gpuBrand" value={selectedGpuBrand} onChange={handleGpuBrandChange} className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm">
+                                              <select id="gpuBrand" name="gpuBrand" value={selectedGpuBrand} onChange={handleGpuBrandChange} className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                                                   <option value="">-- All Brands --</option>
                                                   <option value="NVIDIA">NVIDIA</option>
                                                   <option value="AMD">AMD</option>
@@ -733,7 +714,7 @@ const ComponentSimulator = () => {
                                               <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
                                                   {label} Model {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered)</span>}
                                               </label>
-                                              <select id={key} name={key} value={currentSelection} onChange={(e) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm ${isErrored ? 'border-red-400' : ''}`}>
+                                              <select id={key} name={key} value={currentSelection} onChange={(e) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm ${isErrored ? 'border-red-400' : ''}`}>
                                                    <option value="">-- Select a {label} --</option>
                                                    {options.length === 0 && isAutoCompatEnabled && filterDependencyMet && (<option disabled>No compatible GPUs found</option>)}
                                                    {options.map((item) => (
@@ -760,7 +741,7 @@ const ComponentSimulator = () => {
                                      <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
                                          {label} {filtered && <span className="text-xs text-indigo-600 ml-1">(Filtered)</span>}
                                      </label>
-                                     <select id={key} name={key} value={currentSelection} onChange={(e: ChangeEvent<HTMLSelectElement>) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm ${isErrored ? 'border-red-400' : ''}`}>
+                                     <select id={key} name={key} value={currentSelection} onChange={(e: ChangeEvent<HTMLSelectElement>) => handleSelection(key, e.target.value)} className={`w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm ${isErrored ? 'border-red-400' : ''}`}>
                                          <option value="">-- Select a {label} --</option>
                                          {options.length === 0 && isAutoCompatEnabled && filterDependencyMet && (<option disabled>No compatible options found</option>)}
                                          {options.map((item) => (
@@ -779,7 +760,7 @@ const ComponentSimulator = () => {
                                              value={currentQuantity}
                                              onChange={(e) => handleQuantityChange(key, e.target.value)}
                                              aria-label={`${label} Quantity`}
-                                             className={`w-16 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm ${isErrored ? 'border-red-400' : ''}`}
+                                             className={`w-16 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm ${isErrored ? 'border-red-400' : ''}`}
                                          />
                                      ) : ( <div className="h-10"></div> )}
                                  </div>

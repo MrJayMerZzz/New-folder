@@ -16,7 +16,7 @@ const GuidePage: React.FC = () => {
             Beginner's Guide to Building Your Own PC
           </h1>
           {/* Subtitle */}
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-400">
             Everything you need to know to get started with your first build.
           </p>
         </header>
