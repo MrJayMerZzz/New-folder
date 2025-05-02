@@ -1,16 +1,13 @@
 "use client";
-
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Simulator from "./components/ComponentSimulator";
-import Product from "./components/Product";
 
 export default function Home() {
   return (
     <div>
       <Header />
       <Simulator />
-      <Product />
       <Footer />
     </div>
   );
