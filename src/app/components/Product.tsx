@@ -39,6 +39,7 @@ interface ProductFilters {
     showStorageCapacity?: boolean;
     showEfficiencyRating?: boolean; // Added property for efficiency rating
     showModularity?: boolean; // Added property for modularity
+    showTDP?: boolean; // Added property for TDP
     // Flags for new storage filters if needed:
     showInterface?: boolean;
     // Add flags for other potential filters (e.g., efficiency, modularity for PSU)
@@ -73,7 +74,6 @@ interface ProductConfig<T extends AnyComponent> {
     getRadiatorSize?: (item: T) => number | null | undefined; // Added getter for radiator size
     getHeight?: (item: T) => number | null | undefined; // Added getter for height
     getColor?: (item: T) => string | undefined; // Added getter for color
-    // Getters for new storage fields if needed for filtering/sorting
     getInterface?: (item: T) => string | undefined;
     getReadSpeed?: (item: T) => number | null | undefined;
     getWriteSpeed?: (item: T) => number | null | undefined;
@@ -101,33 +101,7 @@ const productConfigurations: { [key in ComponentTypeKey]?: ProductConfig<any> } 
         filters: { showBrand: true, showCoreCount: true, showBaseClock: true, showSocket: true, },
         getSortableKeys: () => ['name', 'coreCount', 'performanceCoreClock', 'performanceCoreBoostClock', 'microarchitecture', 'tdp', 'price'],
     },
-    // --- Video Card Config  ---
-    videoCard: {
-        dataKey: 'videoCard',
-        getBrand: (item: GPU) => item.brand,
-        getName: (item: GPU) => item.name,
-        getPrice: (item: GPU) => item.price,
-        getBaseClock: (item: GPU) => item.coreClock,
-        getBoostClock: (item: GPU) => item.boostClock,
-        getMemorySize: (item: GPU) => item.memory,
-        columns: [ { key: 'name', label: 'Name', align: 'left', sortable: true, render: (item: GPU) => <span className="font-medium text-gray-900">{item.name}</span> }, { key: 'chipset', label: 'Chipset', align: 'left', sortable: true }, { key: 'memory', label: 'Memory (GB)', align: 'right', sortable: true, render: (item: GPU) => `${item.memory}` }, { key: 'coreClock', label: 'Core Clock (MHz)', align: 'right', sortable: true, render: (item: GPU) => item.coreClock ? `${item.coreClock}` : '-' }, { key: 'boostClock', label: 'Boost Clock (MHz)', align: 'right', sortable: true, render: (item: GPU) => item.boostClock ? `${item.boostClock}` : '-' }, { key: 'tdp', label: 'TDP (W)', align: 'right', sortable: true, render: (item: GPU) => item.tdp ? `${item.tdp}` : '-' }, { key: 'price', label: 'Price', align: 'right', sortable: true, render: (item: GPU) => item.price != null ? `$${item.price.toFixed(2)}` : '-' }, { key: 'length', label: 'Length (mm)', align: 'right', sortable: true, render: (item: GPU) => item.length ? `${item.length}` : '-' }, ],
-        filters: { showBrand: true, showMemorySize: true, },
-        getSortableKeys: () => ['name', 'chipset', 'memory', 'coreClock', 'boostClock', 'tdp', 'price', 'length'],
-    },
-    // --- Memory Config ---
-    memory: {
-        dataKey: 'memory',
-        getBrand: (item: RAM) => item.brand,
-        getName: (item: RAM) => item.name,
-        getPrice: (item: RAM) => item.price,
-        getMemorySize: (item: RAM) => item.sizeGB,
-        getRamSpeed: (item: RAM) => item.speed,
-        getCasLatency: (item: RAM) => item.casLatency,
-        getMemoryProfileSupport: (item: RAM) => { const profiles: string[] = []; if (item.supportsXMP) profiles.push('XMP'); if (item.supportsEXPO) profiles.push('EXPO'); return profiles.length > 0 ? profiles.join(' & ') : 'None'; },
-        columns: [ { key: 'name', label: 'Name', align: 'left', sortable: true, render: (item: RAM) => <span className="font-medium text-gray-900">{item.name}</span> }, { key: 'speed', label: 'Speed (MHz)', align: 'right', sortable: true, render: (item: RAM) => `${item.ddrType}-${item.speed}` }, { key: 'modules', label: 'Modules', align: 'center', sortable: true, render: (item: RAM) => `${item.modules}x${item.sizeGB / item.modules} GB` }, { key: 'casLatency', label: 'CL', align: 'center', sortable: true }, { key: 'firstWordLatency', label: 'Latency (ns)', align: 'right', sortable: true, render: (item: RAM) => item.firstWordLatency.toFixed(2) }, { key: 'memoryProfile', label: 'Mem Profile', align: 'center', sortable: true, render: (item: RAM) => productConfigurations.memory?.getMemoryProfileSupport?.(item) ?? 'N/A' }, { key: 'pricePerGB', label: 'Price/GB', align: 'right', sortable: true, render: (item: RAM) => item.pricePerGB != null ? `$${item.pricePerGB.toFixed(2)}` : '-' }, { key: 'price', label: 'Price', align: 'right', sortable: true, render: (item: RAM) => item.price != null ? `$${item.price.toFixed(2)}` : '-' }, { key: 'rgb', label: 'RGB', align: 'center', sortable: false, render: (item: RAM) => item.rgb ? 'Yes' : 'No' }, ],
-        filters: { showBrand: true, showMemorySize: true, showRamSpeed: true, showCasLatency: true, showMemoryProfile: true, },
-        getSortableKeys: () => ['name', 'speed', 'modules', 'casLatency', 'firstWordLatency', 'memoryProfile', 'pricePerGB', 'price'],
-    },
+    
     // --- Motherboard Config  ---
      motherboard: {
          dataKey: 'motherboard',
@@ -144,6 +118,139 @@ const productConfigurations: { [key in ComponentTypeKey]?: ProductConfig<any> } 
          filters: { showBrand: true, showSocket: true, showFormFactor: true, showChipset: true, showRamType: true, showMemoryProfile: true },
          getSortableKeys: () => ['brandAndName', 'socket', 'chipset', 'formFactor', 'ramType', 'memorySlots', 'memoryMax', 'memoryProfile', 'price'],
      },
+     // --- Memory Config ---
+    memory: {
+        dataKey: 'memory',
+        getBrand: (item: RAM) => item.brand,
+        getName: (item: RAM) => item.name,
+        getPrice: (item: RAM) => item.price,
+        getMemorySize: (item: RAM) => item.sizeGB,
+        getRamSpeed: (item: RAM) => item.speed,
+        getCasLatency: (item: RAM) => item.casLatency,
+        getMemoryProfileSupport: (item: RAM) => { const profiles: string[] = []; if (item.supportsXMP) profiles.push('XMP'); if (item.supportsEXPO) profiles.push('EXPO'); return profiles.length > 0 ? profiles.join(' & ') : 'None'; },
+        columns: [ { key: 'name', label: 'Name', align: 'left', sortable: true, render: (item: RAM) => <span className="font-medium text-gray-900">{item.name}</span> }, { key: 'speed', label: 'Speed (MHz)', align: 'right', sortable: true, render: (item: RAM) => `${item.ddrType}-${item.speed}` }, { key: 'modules', label: 'Modules', align: 'center', sortable: true, render: (item: RAM) => `${item.modules}x${item.sizeGB / item.modules} GB` }, { key: 'casLatency', label: 'CL', align: 'center', sortable: true }, { key: 'firstWordLatency', label: 'Latency (ns)', align: 'right', sortable: true, render: (item: RAM) => item.firstWordLatency.toFixed(2) }, { key: 'memoryProfile', label: 'Mem Profile', align: 'center', sortable: true, render: (item: RAM) => productConfigurations.memory?.getMemoryProfileSupport?.(item) ?? 'N/A' }, { key: 'pricePerGB', label: 'Price/GB', align: 'right', sortable: true, render: (item: RAM) => item.pricePerGB != null ? `$${item.pricePerGB.toFixed(2)}` : '-' }, { key: 'price', label: 'Price', align: 'right', sortable: true, render: (item: RAM) => item.price != null ? `$${item.price.toFixed(2)}` : '-' }, { key: 'rgb', label: 'RGB', align: 'center', sortable: false, render: (item: RAM) => item.rgb ? 'Yes' : 'No' }, ],
+        filters: { showBrand: true, showMemorySize: true, showRamSpeed: true, showCasLatency: true, showMemoryProfile: true, },
+        getSortableKeys: () => ['name', 'speed', 'modules', 'casLatency', 'firstWordLatency', 'memoryProfile', 'pricePerGB', 'price'],
+    },
+     storage: {
+        dataKey: 'storage',
+        getBrand: (item: StorageDevice) => item.brand,
+        getName: (item: StorageDevice) => item.name,
+        getBrandAndName: defaultGetBrandAndName,
+        getPrice: (item: StorageDevice) => item.price,
+        getStorageCapacity: (item: StorageDevice) => item.capacity,
+        getStorageType: (item: StorageDevice) => item.type,
+        getInterface: (item: StorageDevice) => item.interface,
+        getFormFactor: (item: StorageDevice) => item.formFactor,
+        getReadSpeed: (item: StorageDevice) => item.sequentialReadSpeed,
+        getWriteSpeed: (item: StorageDevice) => item.sequentialWriteSpeed,
+
+        columns: [
+            { key: 'brandAndName', label: 'Name', align: 'left', sortable: true, render: (item: StorageDevice) => <span className="font-medium text-gray-900">{productConfigurations.storage?.getBrandAndName?.(item)}</span> },
+            { key: 'type', label: 'Type', align: 'left', sortable: true },
+            { key: 'capacity', label: 'Capacity', align: 'right', sortable: true, render: (item: StorageDevice) => item.capacity < 1000 ? `${item.capacity} GB` : `${item.capacity / 1000} TB` },
+            { key: 'interface', label: 'Interface', align: 'left', sortable: true },
+            { key: 'formFactor', label: 'Form Factor', align: 'left', sortable: true },
+            { key: 'sequentialReadSpeed', label: 'Read (MB/s)', align: 'right', sortable: true, render: (item: StorageDevice) => item.sequentialReadSpeed ?? '-' },
+            { key: 'sequentialWriteSpeed', label: 'Write (MB/s)', align: 'right', sortable: true, render: (item: StorageDevice) => item.sequentialWriteSpeed ?? '-' },
+            { key: 'cache', label: 'Cache', align: 'right', sortable: true, render: (item: StorageDevice) => item.cache || '-' },
+            { key: 'rpm', label: 'RPM', align: 'right', sortable: true, render: (item: StorageDevice) => item.rpm ?? '-' },
+            { key: 'pricePerGB', label: 'Price/GB', align: 'right', sortable: true, render: (item: StorageDevice) => item.pricePerGB != null ? `$${item.pricePerGB.toFixed(2)}` : '-' },
+            { key: 'price', label: 'Price', align: 'right', sortable: true, render: (item: StorageDevice) => item.price != null ? `$${item.price.toFixed(2)}` : '-' },
+        ],
+
+        filters: {
+            showBrand: true,
+            showStorageType: true,
+            showStorageCapacity: true, 
+            // showInterface: true,
+            // showFormFactor: true,
+        },
+        getSortableKeys: () => [
+            'brandAndName',
+            'type',
+            'capacity', 
+            'interface', 
+            'formFactor', 
+            'sequentialReadSpeed', 
+            'sequentialWriteSpeed', 
+            'cache', 
+            'rpm', 
+            'pricePerGB', 
+            'price'
+        ],
+    },
+    // --- Video Card Config  ---
+    videoCard: {
+        dataKey: 'videoCard',
+        getBrand: (item: GPU) => item.brand,
+        getName: (item: GPU) => item.name,
+        getPrice: (item: GPU) => item.price,
+        getBaseClock: (item: GPU) => item.coreClock,
+        getBoostClock: (item: GPU) => item.boostClock,
+        getMemorySize: (item: GPU) => item.memory,
+        columns: [ 
+            { 
+                key: 'name', 
+                label: 'Name', 
+                align: 'left', 
+                sortable: true, 
+                render: (item: GPU) => <span className="font-medium text-gray-900">{item.name}</span> 
+            }, 
+            { 
+                key: 'chipset', 
+                label: 'Chipset', 
+                align: 'left', 
+                sortable: true 
+            }, 
+                { 
+                    key: 'memory', 
+                    label: 'Memory (GB)', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => `${item.memory}` 
+                }, 
+                { 
+                    key: 'coreClock', 
+                    label: 'Core Clock (MHz)', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => item.coreClock ? `${item.coreClock}` : '-' 
+                }, 
+                { 
+                    key: 'boostClock', 
+                    label: 'Boost Clock (MHz)', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => item.boostClock ? `${item.boostClock}` : '-' 
+                }, 
+                { 
+                    key: 
+                    'tdp', 
+                    label: 
+                    'TDP (W)', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => item.tdp ? `${item.tdp}` : '-' 
+                }, 
+                { 
+                    key: 'length', 
+                    label: 'Length (mm)', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => item.length ? `${item.length}` : '-' 
+                }, 
+                { 
+                    key: 'price', 
+                    label: 'Price', 
+                    align: 'right', 
+                    sortable: true, 
+                    render: (item: GPU) => item.price != null ? `$${item.price.toFixed(2)}` : '-' 
+                }
+            ],
+        filters: { showBrand: true, showMemorySize: true, showTDP: true, showBaseClock: true, showBoostClock: true, showChipset: true, },
+        getSortableKeys: () => ['name', 'chipset', 'memory', 'coreClock', 'boostClock', 'tdp', 'length','price'],
+    },
     // --- Case Config ---
     case: {
         dataKey: 'case',
@@ -179,24 +286,12 @@ const productConfigurations: { [key in ComponentTypeKey]?: ProductConfig<any> } 
             { 
                 key: 'wattage', 
                 label: 'Wattage (W)', 
-                align: 'right', 
+                align: 'left', 
                 sortable: true 
             }, 
             { 
                 key: 'efficiencyRating', 
                 label: 'Efficiency', 
-                align: 'left', 
-                sortable: true 
-            },
-            { 
-                key: 'modularity', 
-                label: 'Modularity', 
-                align: 'left', 
-                sortable: true 
-            },
-            { 
-                key: 'formFactor', 
-                label: 'Form Factor', 
                 align: 'left', 
                 sortable: true 
             },
@@ -223,7 +318,7 @@ const productConfigurations: { [key in ComponentTypeKey]?: ProductConfig<any> } 
             //showFormFactor: true, 
         },
         // Updated to include all sortable columns
-        getSortableKeys: () => ['brandAndName', 'wattage', 'efficiencyRating', 'modularity', 'formFactor', 'color', 'price'], 
+        getSortableKeys: () => ['brandAndName', 'wattage', 'efficiencyRating', 'color', 'price'], 
     },
     cpuCooler: {
         dataKey: 'cpuCooler',
@@ -300,55 +395,7 @@ const productConfigurations: { [key in ComponentTypeKey]?: ProductConfig<any> } 
     getSortableKeys: (): string[] => ['brandAndName', 'type', 'fanRPM', 'noiseLevel', 'radiatorSize', 'height', 'price'],
     },
 
-    storage: {
-        dataKey: 'storage',
-        getBrand: (item: StorageDevice) => item.brand,
-        getName: (item: StorageDevice) => item.name,
-        getBrandAndName: defaultGetBrandAndName,
-        getPrice: (item: StorageDevice) => item.price,
-        getStorageCapacity: (item: StorageDevice) => item.capacity,
-        getStorageType: (item: StorageDevice) => item.type,
-        getInterface: (item: StorageDevice) => item.interface,
-        getFormFactor: (item: StorageDevice) => item.formFactor,
-        getReadSpeed: (item: StorageDevice) => item.sequentialReadSpeed,
-        getWriteSpeed: (item: StorageDevice) => item.sequentialWriteSpeed,
-
-        // UPDATED: Columns array to include new fields and fix 'capacity' key
-        columns: [
-            { key: 'brandAndName', label: 'Name', align: 'left', sortable: true, render: (item: StorageDevice) => <span className="font-medium text-gray-900">{productConfigurations.storage?.getBrandAndName?.(item)}</span> },
-            { key: 'type', label: 'Type', align: 'left', sortable: true },
-            { key: 'capacity', label: 'Capacity', align: 'right', sortable: true, render: (item: StorageDevice) => item.capacity < 1000 ? `${item.capacity} GB` : `${item.capacity / 1000} TB` },
-            { key: 'interface', label: 'Interface', align: 'left', sortable: true },
-            { key: 'formFactor', label: 'Form Factor', align: 'left', sortable: true },
-            { key: 'sequentialReadSpeed', label: 'Read (MB/s)', align: 'right', sortable: true, render: (item: StorageDevice) => item.sequentialReadSpeed ?? '-' },
-            { key: 'sequentialWriteSpeed', label: 'Write (MB/s)', align: 'right', sortable: true, render: (item: StorageDevice) => item.sequentialWriteSpeed ?? '-' },
-            { key: 'cache', label: 'Cache', align: 'right', sortable: true, render: (item: StorageDevice) => item.cache || '-' },
-            { key: 'rpm', label: 'RPM', align: 'right', sortable: true, render: (item: StorageDevice) => item.rpm ?? '-' },
-            { key: 'pricePerGB', label: 'Price/GB', align: 'right', sortable: true, render: (item: StorageDevice) => item.pricePerGB != null ? `$${item.pricePerGB.toFixed(2)}` : '-' },
-            { key: 'price', label: 'Price', align: 'right', sortable: true, render: (item: StorageDevice) => item.price != null ? `$${item.price.toFixed(2)}` : '-' },
-        ],
-
-        filters: {
-            showBrand: true,
-            showStorageType: true,
-            showStorageCapacity: true, 
-            // showInterface: true,
-            // showFormFactor: true,
-        },
-        getSortableKeys: () => [
-            'brandAndName',
-            'type',
-            'capacity', 
-            'interface', 
-            'formFactor', 
-            'sequentialReadSpeed', 
-            'sequentialWriteSpeed', 
-            'cache', 
-            'rpm', 
-            'pricePerGB', 
-            'price'
-        ],
-    },
+    
 };
 
 const availableProductTypes = Object.keys(componentDataMap) as ComponentTypeKey[];
