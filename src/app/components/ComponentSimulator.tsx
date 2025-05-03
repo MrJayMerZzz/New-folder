@@ -13,7 +13,7 @@ import {
     Case,
     CPUCooler,
     StorageDevice
-} from "../constants/data"; // Adjust path as needed
+} from "../constants/data";
 
 const componentSlots: { key: ComponentTypeKey; label: string }[] = [
     { key: "cpu", label: "CPU" },
@@ -329,43 +329,51 @@ const ComponentSimulator = () => {
          const psuWattage = selectedPsuObject?.wattage;
 
          if (selectedCpuObject && selectedMotherboardObject && cpuSocket !== moboSocket) {
-             issues.push({ message: `CPU (${cpuBrand} <span class="math-inline">\{cpuName\}\) socket \(<b\></span>{cpuSocket}</b>) doesn't match Motherboard (${moboBrand} <span class="math-inline">\{moboName\}\) socket \(<b\></span>{moboSocket}</b>).`, involvedKeys: ['cpu', 'motherboard'] });
-         }
-         if (ramModules && moboMemSlots && (ramModules * ramQuantity) > moboMemSlots) {
-             issues.push({ message: `Selected RAM quantity (${ramQuantity} x <span class="math-inline">\{ramModules\} modules/kit \= <b\></span>{ramModules * ramQuantity}</b> total modules) exceeds motherboard slots (<b>${moboMemSlots}</b>).`, involvedKeys: ['memory', 'motherboard'] });
-         }
-         if (ramType && moboRamType && ramType !== moboRamType) {
-             issues.push({ message: `RAM type (<b><span class="math-inline">\{ramType\}</b\>\) is incompatible with Motherboard supported type \(<b\></span>{moboRamType}</b>).`, involvedKeys: ['memory', 'motherboard'] });
-         }
-         if (moboFormFactor && caseFactors && !caseFactors.includes(moboFormFactor)) {
-             issues.push({ message: `Motherboard form factor (<b><span class="math-inline">\{moboFormFactor\}</b\>\) may not fit in the Case \(</span>{caseName}). Supported: ${caseFactors.join(', ')}.`, involvedKeys: ['motherboard', 'case'] });
-         }
-         if (gpuLength && caseMaxGpu != null && gpuLength > caseMaxGpu) {
-             issues.push({ message: `GPU (${gpuBrand} <span class="math-inline">\{gpuName\}\) length \(<b\></span>{gpuLength}mm</b>) exceeds Case maximum (<b>${caseMaxGpu}mm</b>).`, involvedKeys: ['videoCard', 'case'] });
-         } else if (gpuLength && selectedCaseObject && caseMaxGpu === undefined) {
-             issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) maximum GPU length is not specified\. Verify compatibility with GPU \(</span>{gpuName}, ${gpuLength}mm).`, involvedKeys: ['videoCard', 'case'] });
-         }
-         if (coolerType === 'Air' && coolerHeight != null && caseMaxCooler != null && coolerHeight > caseMaxCooler) {
-             issues.push({ message: `CPU Cooler (<span class="math-inline">\{coolerName\}\) height \(<b\></span>{coolerHeight}mm</b>) exceeds Case maximum clearance (<b>${caseMaxCooler}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
-         } else if (coolerType === 'Air' && coolerHeight != null && selectedCaseObject && caseMaxCooler === undefined) {
-             issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) maximum CPU cooler height is not specified\. Verify compatibility with CPU Cooler \(</span>{coolerName}, ${coolerHeight}mm).`, involvedKeys: ['cpuCooler', 'case'] });
-         }
-         if (coolerType === 'Liquid' && coolerRadSize != null && selectedCaseObject && !caseSupportsRadiator(selectedCaseObject, coolerRadSize)) {
-             if (caseRadLocations !== undefined) {
-                 issues.push({ message: `Case (<span class="math-inline">\{caseName\}\) does not appear to support the selected AIO cooler's radiator size \(<b\></span>{coolerRadSize}mm</b>). Check mounting options (Top, Front, Rear, etc.).`, involvedKeys: ['cpuCooler', 'case'] });
-             } else {
-                 issues.push({ message: `Note: Case (<span class="math-inline">\{caseName\}\) radiator support information is missing\. Verify compatibility with AIO Cooler \(</span>{coolerName}, ${coolerRadSize}mm).`, involvedKeys: ['cpuCooler', 'case'] });
-             }
-         }
-         if (coolerSockets) {
-             const targetSocket = cpuSocket || moboSocket;
-             if (targetSocket && !coolerSockets.includes(targetSocket)) {
-                 issues.push({ message: `CPU Cooler (<span class="math-inline">\{coolerName\}\) may not support the selected CPU/Motherboard socket \(<b\></span>{targetSocket}</b>). Supported: ${coolerSockets.join(', ')}.`, involvedKeys: ['cpuCooler', 'cpu', 'motherboard'] });
-             }
-         }
-         if (recommendedWattage > 0 && psuWattage != null && psuWattage < recommendedWattage) {
-             issues.push({ message: `Selected PSU (<span class="math-inline">\{psuName\}\) wattage \(<b\></span>{psuWattage}W</b>) is below the recommended level (~${recommendedWattage}W) for these components. Consider a higher wattage PSU for stability.`, involvedKeys: ['powerSupply', 'cpu', 'videoCard', 'memory', 'storage'] });
-         }
+            issues.push({ message: `CPU (${cpuBrand} ${cpuName}) socket (<b>${cpuSocket}</b>) doesn't match Motherboard (${moboBrand} ${moboName}) socket (<b>${moboSocket}</b>).`, involvedKeys: ['cpu', 'motherboard'] });
+        }
+        if (ramModules && moboMemSlots && (ramModules * ramQuantity) > moboMemSlots) {
+            // Assuming you want the calculated total and the mobo slots bolded
+            issues.push({ message: `Selected RAM quantity (${ramQuantity} x ${ramModules} modules/kit = <b>${ramModules * ramQuantity}</b> total modules) exceeds motherboard slots (<b>${moboMemSlots}</b>).`, involvedKeys: ['memory', 'motherboard'] });
+        }
+        if (ramType && moboRamType && ramType !== moboRamType) {
+            issues.push({ message: `RAM type (<b>${ramType}</b>) is incompatible with Motherboard supported type (<b>${moboRamType}</b>).`, involvedKeys: ['memory', 'motherboard'] });
+        }
+        if (moboFormFactor && caseFactors && !caseFactors.includes(moboFormFactor)) {
+            // Bolding the specific factor and the list of supported factors
+            issues.push({ message: `Motherboard form factor (<b>${moboFormFactor}</b>) may not fit in the Case (${caseName}). Supported: <b>${caseFactors.join(', ')}</b>.`, involvedKeys: ['motherboard', 'case'] });
+        }
+        if (gpuLength && caseMaxGpu != null && gpuLength > caseMaxGpu) {
+            issues.push({ message: `GPU (${gpuBrand} ${gpuName}) length (<b>${gpuLength}mm</b>) exceeds Case maximum (<b>${caseMaxGpu}mm</b>).`, involvedKeys: ['videoCard', 'case'] });
+        } else if (gpuLength && selectedCaseObject && caseMaxGpu === undefined) {
+            // Bolding the GPU length in the note
+            issues.push({ message: `Note: Case (${caseName}) maximum GPU length is not specified. Verify compatibility with GPU (${gpuName}, <b>${gpuLength}mm</b>).`, involvedKeys: ['videoCard', 'case'] });
+        }
+        if (coolerType === 'Air' && coolerHeight != null && caseMaxCooler != null && coolerHeight > caseMaxCooler) {
+            issues.push({ message: `CPU Cooler (${coolerName}) height (<b>${coolerHeight}mm</b>) exceeds Case maximum clearance (<b>${caseMaxCooler}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
+        } else if (coolerType === 'Air' && coolerHeight != null && selectedCaseObject && caseMaxCooler === undefined) {
+            // Bolding the cooler height in the note
+            issues.push({ message: `Note: Case (${caseName}) maximum CPU cooler height is not specified. Verify compatibility with CPU Cooler (${coolerName}, <b>${coolerHeight}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
+        }
+        if (coolerType === 'Liquid' && coolerRadSize != null && selectedCaseObject && !caseSupportsRadiator(selectedCaseObject, coolerRadSize)) {
+            if (caseRadLocations !== undefined) {
+                 // Bolding the radiator size
+                issues.push({ message: `Case (${caseName}) does not appear to support the selected AIO cooler's radiator size (<b>${coolerRadSize}mm</b>). Check mounting options (Top, Front, Rear, etc.).`, involvedKeys: ['cpuCooler', 'case'] });
+            } else {
+                // Bolding the radiator size in the note
+                issues.push({ message: `Note: Case (${caseName}) radiator support information is missing. Verify compatibility with AIO Cooler (${coolerName}, <b>${coolerRadSize}mm</b>).`, involvedKeys: ['cpuCooler', 'case'] });
+            }
+        }
+        if (coolerSockets) {
+            const targetSocket = cpuSocket || moboSocket;
+            if (targetSocket && !coolerSockets.includes(targetSocket)) {
+                // Bolding the target socket and the list of supported sockets
+                issues.push({ message: `CPU Cooler (${coolerName}) may not support the selected CPU/Motherboard socket (<b>${targetSocket}</b>). Supported: <b>${coolerSockets.join(', ')}</b>.`, involvedKeys: ['cpuCooler', 'cpu', 'motherboard'] });
+            }
+        }
+        if (recommendedWattage > 0 && psuWattage != null && psuWattage < recommendedWattage) {
+            // Bolding the actual PSU wattage and the recommended wattage
+            issues.push({ message: `Selected PSU (${psuName}) wattage (<b>${psuWattage}W</b>) is below the recommended level (<b>~${recommendedWattage}W</b>) for these components. Consider a higher wattage PSU for stability.`, involvedKeys: ['powerSupply', 'cpu', 'videoCard', 'memory', 'storage'] });
+        }
 
         return issues;
     }, [
@@ -379,177 +387,179 @@ const ComponentSimulator = () => {
     const hasError = (componentKey: ComponentTypeKey): boolean => {
         return (compatibilityIssues || []).some(issue => issue.involvedKeys.includes(componentKey));
     };
+    
+    const generatePdf = () => {
+        const doc = new jsPDF();
+       const lineHeight = 7;
+       const startX = 10;
+       const pageHeight = doc.internal.pageSize.height;
+       const marginBottom = 20;
+       let currentY = 20;
 
-     const generatePdf = () => {
-          const doc = new jsPDF();
-         const lineHeight = 7;
-         const startX = 10;
-         const pageHeight = doc.internal.pageSize.height;
-         const marginBottom = 20;
-         let currentY = 20;
+       const addPageIfNeeded = () => {
+           if (currentY > pageHeight - marginBottom) {
+               doc.addPage();
+               currentY = 20;
+           }
+       };
 
-         const addPageIfNeeded = () => {
-             if (currentY > pageHeight - marginBottom) {
-                 doc.addPage();
-                 currentY = 20;
-             }
-         };
+       doc.setFontSize(18);
+       doc.text("PC Component Selection", startX, currentY);
+       currentY += lineHeight * 1.5;
+       addPageIfNeeded();
 
-         doc.setFontSize(18);
-         doc.text("PC Component Selection", startX, currentY);
-         currentY += lineHeight * 1.5;
-         addPageIfNeeded();
+       doc.setFontSize(10);
+       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, startX, currentY);
+       currentY += lineHeight * 1.5;
+       addPageIfNeeded();
 
-         doc.setFontSize(10);
-         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, startX, currentY);
-         currentY += lineHeight * 1.5;
-         addPageIfNeeded();
+       doc.setFontSize(12);
+       doc.setFont('helvetica', 'bold');
+       doc.text("Selected Components:", startX, currentY);
+       doc.setFont('helvetica', 'normal');
+       currentY += lineHeight;
+       addPageIfNeeded();
 
-         doc.setFontSize(12);
-         doc.setFont('helvetica', 'bold');
-         doc.text("Selected Components:", startX, currentY);
-         doc.setFont('helvetica', 'normal');
-         currentY += lineHeight;
-         addPageIfNeeded();
+       const selectedItems = [
+            { label: "CPU", obj: selectedCpuObject, qty: 1, key: 'cpu' as ComponentTypeKey },
+            { label: "CPU Cooler", obj: selectedCoolerObject, qty: 1, key: 'cpuCooler' as ComponentTypeKey },
+            { label: "Motherboard", obj: selectedMotherboardObject, qty: 1, key: 'motherboard' as ComponentTypeKey },
+            { label: "Memory", obj: selectedRamObject, qty: ramQuantity, key: 'memory' as ComponentTypeKey },
+            { label: "Storage", obj: selectedStorageObject, qty: storageQuantity, key: 'storage' as ComponentTypeKey },
+            { label: "Video Card", obj: selectedGpuObject, qty: 1, key: 'videoCard' as ComponentTypeKey },
+            { label: "Case", obj: selectedCaseObject, qty: 1, key: 'case' as ComponentTypeKey },
+            { label: "Power Supply", obj: selectedPsuObject, qty: 1, key: 'powerSupply' as ComponentTypeKey },
+       ];
 
-         const selectedItems = [
-              { label: "CPU", obj: selectedCpuObject, qty: 1, key: 'cpu' as ComponentTypeKey },
-              { label: "CPU Cooler", obj: selectedCoolerObject, qty: 1, key: 'cpuCooler' as ComponentTypeKey },
-              { label: "Motherboard", obj: selectedMotherboardObject, qty: 1, key: 'motherboard' as ComponentTypeKey },
-              { label: "Memory", obj: selectedRamObject, qty: ramQuantity, key: 'memory' as ComponentTypeKey },
-              { label: "Storage", obj: selectedStorageObject, qty: storageQuantity, key: 'storage' as ComponentTypeKey },
-              { label: "Video Card", obj: selectedGpuObject, qty: 1, key: 'videoCard' as ComponentTypeKey },
-              { label: "Case", obj: selectedCaseObject, qty: 1, key: 'case' as ComponentTypeKey },
-              { label: "Power Supply", obj: selectedPsuObject, qty: 1, key: 'powerSupply' as ComponentTypeKey },
-         ];
+       doc.setFontSize(10);
+       selectedItems.forEach(({ label, obj, qty, key }) => {
+           if (obj?.name && typeof obj.name === 'string' && obj.name.length > 0) {
+               const isItemErrored = hasError(key);
+               const price = obj.price ?? 0;
+               const linePrice = price * qty;
+               const priceString = price > 0 ? `$${price.toFixed(2)}` : 'N/A';
+               const linePriceString = linePrice > 0 ? `$${linePrice.toFixed(2)}` : '';
+               const quantityString = (label === 'Memory' || label === 'Storage') && qty > 1 ? ` (x${qty})` : '';
+               const itemName = obj.name;
+                let lineText = `${label}: ${itemName}${quantityString} - Price: ${priceString}`;
+               if (linePriceString && quantityString) lineText += ` | Total: ${linePriceString}`;
 
-         doc.setFontSize(10);
-         selectedItems.forEach(({ label, obj, qty, key }) => {
-             if (obj?.name && typeof obj.name === 'string' && obj.name.length > 0) {
-                 const isItemErrored = hasError(key);
-                 const price = obj.price ?? 0;
-                 const linePrice = price * qty;
-                 const priceString = price > 0 ? `$${price.toFixed(2)}` : 'N/A';
-                 const linePriceString = linePrice > 0 ? `$${linePrice.toFixed(2)}` : '';
-                 const quantityString = (label === 'Memory' || label === 'Storage') && qty > 1 ? ` (x${qty})` : '';
-                 const itemName = obj.name;
-                 let lineText = `${label}: <span class="math-inline">\{itemName\}</span>{quantityString} - Price: ${priceString}`;
-                 if (linePriceString && quantityString) lineText += ` | Total: ${linePriceString}`;
+               let splitText: string | string[] = '';
+               try {
+                   if (lineText) {
+                       splitText = doc.splitTextToSize(lineText, 180);
+                   } else {
+                        console.warn(`PDF Gen: Empty lineText for ${label}: ${itemName}`);
+                        splitText = [`${label}: ${itemName} - Error creating details line`];
+                   }
+               } catch (splitError) {
+                   console.error(`PDF Gen: Error during splitTextToSize for ${label}: ${itemName}`, splitError, { lineText });
+                   splitText = [`${label}: ${itemName} - Error splitting text`];
+               }
 
-                 let splitText: string | string[] = '';
-                 try {
-                     if (lineText) {
-                         splitText = doc.splitTextToSize(lineText, 180);
-                     } else {
-                          console.warn(`PDF Gen: Empty lineText for ${label}: ${itemName}`);
-                          splitText = [`${label}: ${itemName} - Error creating details line`];
-                     }
-                 } catch (splitError) {
-                     console.error(`PDF Gen: Error during splitTextToSize for ${label}: ${itemName}`, splitError, { lineText });
-                     splitText = [`${label}: ${itemName} - Error splitting text`];
-                 }
+               addPageIfNeeded();
 
-                 addPageIfNeeded();
+               const textToDraw = (Array.isArray(splitText) && splitText.length > 0)
+                                   ? splitText
+                                   : (typeof splitText === 'string' && splitText.length > 0)
+                                   ? [splitText]
+                                   : null;
 
-                 const textToDraw = (Array.isArray(splitText) && splitText.length > 0)
-                                     ? splitText
-                                     : (typeof splitText === 'string' && splitText.length > 0)
-                                     ? [splitText]
-                                     : null;
+               if (textToDraw) {
+                   if (isItemErrored) {
+                       console.log(`PDF Gen: Attempting to draw ERRORED item: ${label}`, { lineText, splitText, textToDraw });
+                       doc.setTextColor(255, 0, 0);
+                   }
 
-                 if (textToDraw) {
-                     if (isItemErrored) {
-                         console.log(`PDF Gen: Attempting to draw ERRORED item: ${label}`, { lineText, splitText, textToDraw });
-                         doc.setTextColor(255, 0, 0);
-                     }
+                   try {
+                       doc.text(textToDraw, startX, currentY);
+                   } catch (textError) {
+                        console.error(`PDF Gen: Error during doc.text for ${label}: ${itemName}`, textError, { textToDraw });
+                        doc.setTextColor(255, 0, 0);
+                        doc.text(`${label}: Error rendering details`, startX, currentY);
+                   }
 
-                     try {
-                         doc.text(textToDraw, startX, currentY);
-                     } catch (textError) {
-                          console.error(`PDF Gen: Error during doc.text for ${label}: ${itemName}`, textError, { textToDraw });
-                          doc.setTextColor(255, 0, 0);
-                          doc.text(`${label}: Error rendering details`, startX, currentY);
-                     }
+                   doc.setTextColor(0, 0, 0);
 
-                     doc.setTextColor(0, 0, 0);
+                   currentY += lineHeight * textToDraw.length;
+                   currentY += lineHeight * 0.3;
+               } else {
+                    console.error(`PDF Gen: Could not generate valid text array for ${label}: ${itemName}`, {lineText, splitText});
+                    addPageIfNeeded();
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(`${label}: --- Error displaying item ---`, startX, currentY);
+                    doc.setTextColor(0, 0, 0);
+                    currentY += lineHeight * 1.3;
+               }
 
-                     currentY += lineHeight * textToDraw.length;
-                     currentY += lineHeight * 0.3;
-                 } else {
-                      console.error(`PDF Gen: Could not generate valid text array for ${label}: ${itemName}`, {lineText, splitText});
-                      addPageIfNeeded();
-                      doc.setTextColor(150, 150, 150);
-                      doc.text(`${label}: --- Error displaying item ---`, startX, currentY);
-                      doc.setTextColor(0, 0, 0);
-                      currentY += lineHeight * 1.3;
-                 }
+           } else if (selections[key]) {
+                addPageIfNeeded();
+                doc.setTextColor(150, 150, 150);
+                doc.text(`${label}: ${selections[key]} (Data Object Not Found)`, startX, currentY);
+                doc.setTextColor(0, 0, 0);
+                currentY += lineHeight * 1.3;
+           }
+       });
 
-             } else if (selections[key]) {
-                  addPageIfNeeded();
-                  doc.setTextColor(150, 150, 150);
-                  doc.text(`${label}: ${selections[key]} (Data Object Not Found)`, startX, currentY);
-                  doc.setTextColor(0, 0, 0);
-                  currentY += lineHeight * 1.3;
-             }
-         });
+       currentY += lineHeight * 0.7;
+       addPageIfNeeded();
+       doc.setLineWidth(0.5);
+       doc.line(startX, currentY, 200, currentY);
+       currentY += lineHeight;
+       addPageIfNeeded();
 
-         currentY += lineHeight * 0.7;
-         addPageIfNeeded();
-         doc.setLineWidth(0.5);
-         doc.line(startX, currentY, 200, currentY);
-         currentY += lineHeight;
-         addPageIfNeeded();
+       if (Array.isArray(compatibilityIssues) && compatibilityIssues.length > 0) {
+           doc.setFontSize(11);
+           doc.setFont('helvetica', 'bold');
+           doc.setTextColor(200, 0, 0);
+           doc.text("Potential Compatibility Issues:", startX, currentY);
+           doc.setFont('helvetica', 'normal');
+           currentY += lineHeight * 0.8;
+           addPageIfNeeded();
 
-         if (Array.isArray(compatibilityIssues) && compatibilityIssues.length > 0) {
-             doc.setFontSize(11);
-             doc.setFont('helvetica', 'bold');
-             doc.setTextColor(200, 0, 0);
-             doc.text("Potential Compatibility Issues:", startX, currentY);
-             doc.setFont('helvetica', 'normal');
-             currentY += lineHeight * 0.8;
-             addPageIfNeeded();
+           doc.setFontSize(9);
+           doc.setTextColor(0, 0, 0);
+           compatibilityIssues.forEach(issue => {
+               const message = (typeof issue?.message === 'string') ? issue.message.replace(/<\/?b>/g, '') : 'Unknown issue';
+               const splitIssueText = doc.splitTextToSize(`- ${message}`, 180);
+               addPageIfNeeded();
+               doc.text(Array.isArray(splitIssueText) ? splitIssueText : [splitIssueText], startX + 2, currentY);
+               currentY += lineHeight * (Array.isArray(splitIssueText) ? splitIssueText.length : 1) * 0.9;
+           });
+           currentY += lineHeight;
+           addPageIfNeeded();
+       }
 
-             doc.setFontSize(9);
-             doc.setTextColor(0, 0, 0);
-             compatibilityIssues.forEach(issue => {
-                 const message = (typeof issue?.message === 'string') ? issue.message.replace(/<\/?b>/g, '') : 'Unknown issue';
-                 const splitIssueText = doc.splitTextToSize(`- ${message}`, 180);
-                 addPageIfNeeded();
-                 doc.text(Array.isArray(splitIssueText) ? splitIssueText : [splitIssueText], startX + 2, currentY);
-                 currentY += lineHeight * (Array.isArray(splitIssueText) ? splitIssueText.length : 1) * 0.9;
-             });
-             currentY += lineHeight;
-             addPageIfNeeded();
-         }
+       if (typeof recommendedWattage === 'number' && recommendedWattage > 0) {
+           doc.setFontSize(10);
+           doc.setFont('helvetica', 'bold');
+           doc.text(`Recommended PSU Wattage: ~${recommendedWattage}W`, startX, currentY);
+           currentY += lineHeight;
+           addPageIfNeeded();
+           doc.setFont('helvetica', 'normal');
+       }
 
-         if (typeof recommendedWattage === 'number' && recommendedWattage > 0) {
-             doc.setFontSize(10);
-             doc.setFont('helvetica', 'bold');
-             doc.text(`Recommended PSU Wattage: ~${recommendedWattage}W`, startX, currentY);
-             currentY += lineHeight;
-             addPageIfNeeded();
-             doc.setFont('helvetica', 'normal');
-         }
+       if (typeof totalPrice === 'number' && totalPrice > 0) {
+           doc.setFontSize(10);
+           doc.setFont('helvetica', 'bold');
+           doc.text(`Estimated Total Price: $${totalPrice.toFixed(2)}`, startX, currentY);
+           currentY += lineHeight;
+           addPageIfNeeded();
+           doc.setFont('helvetica', 'normal');
+       }
 
-         if (typeof totalPrice === 'number' && totalPrice > 0) {
-             doc.setFontSize(10);
-             doc.setFont('helvetica', 'bold');
-             doc.text(`Estimated Total Price: $${totalPrice.toFixed(2)}`, startX, currentY);
-             currentY += lineHeight;
-             addPageIfNeeded();
-             doc.setFont('helvetica', 'normal');
-         }
+       currentY += lineHeight * 0.5;
+       addPageIfNeeded();
+       doc.setFontSize(8);
+       doc.setTextColor(100);
+       doc.text("Note: Prices are estimates and may vary. Wattage is an estimate; check manufacturer recommendations.", startX, currentY);
+       doc.setTextColor(0);
 
-         currentY += lineHeight * 0.5;
-         addPageIfNeeded();
-         doc.setFontSize(8);
-         doc.setTextColor(100);
-         doc.text("Note: Prices are estimates and may vary. Wattage is an estimate; check manufacturer recommendations.", startX, currentY);
-         doc.setTextColor(0);
-
-         doc.save("pc-build-list.pdf");
-    };
-
+       doc.save("pc-build-list.pdf");
+  };
+    
+    // Example of how you might call it (ensure variables are set)
+    // generatePdf();
 
     // --- Rendering ---
     return (
