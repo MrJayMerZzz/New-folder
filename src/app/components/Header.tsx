@@ -31,7 +31,7 @@ const Header: React.FC = () => {
    const navItems = [
      { name: 'Builder', href: '/', hasDropdown: false },
      // Main "Products" link might go to the page without a category, or the first one
-     { name: 'Products', href: '/Product', hasDropdown: true },
+     { name: 'Products', href: '/Product', hasDropdown: false },
      { name: 'Guides', href: '/guide', hasDropdown: false },
    ];
 

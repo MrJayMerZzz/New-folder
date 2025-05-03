@@ -1,7 +1,7 @@
 export type CPUCooler = {
     name: string;
     brand: string; // e.g., 'Noctua', 'Cooler Master', 'Corsair', 'be quiet!'
-    type: 'Air' | 'Liquid'; // Type of cooler
+    type: 'Air' | 'Liquid' | 'Passive'; // Type of cooler
     fanRPM: string | null; // Fan speed range (e.g., "600 - 1800 RPM") or null
     noiseLevel: string | null; // Noise level range (e.g., "19 - 25 dBA") or null
     color: string; // Primary color
@@ -28,7 +28,7 @@ export type CPUCooler = {
     {
       name: "Low-Profile CPU Cooler LGA 1700", // Generic name from Arvutitark
       brand: "Akasa",
-      type: 'Air',
+      type: 'Passive',
       fanRPM: null, // Not specified
       noiseLevel: null, // Not specified
       color: "Black", // Assumed
