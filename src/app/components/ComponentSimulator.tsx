@@ -576,7 +576,7 @@ const ComponentSimulator = () => {
                               {compatibilityIssues.length > 0
                                   ? <>Found <b>{compatibilityIssues.length}</b> potential compatibility issue(s).</>
                                   : (selectedCpuObject || selectedGpuObject || selectedMotherboardObject || selectedCaseObject || selectedPsuObject || selectedCoolerObject || selectedRamObject || selectedStorageObject)
-                                  ? 'Selected components appear compatible.'
+                                  ? 'Selected components are compatible.'
                                   : 'Select components to check compatibility.'}
                           </div>
                           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-right self-end sm:self-center">
